@@ -180,6 +180,7 @@ char *strptr;
     s[strlen(s) - 1] = '\0';
     if (show_token)
         printf("#string:%s\n", s);
+    free(s);
 }
 
 \'[a-zA-Z0-9\n\t]\'  {PL; PT(CHAR);}
