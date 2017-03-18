@@ -174,13 +174,16 @@ char *strptr;
 
 \".*\"  {
     PL;
-    char *s = (char *)malloc(strlen(yytext) + 5);
+    char *s = NULL, *freePtr;
+    s = (char *)malloc(strlen(yytext) + 5);
     strcpy(s, yytext);
-    s++;
+    freePtr = s++;
     s[strlen(s) - 1] = '\0';
     if (show_token)
         printf("#string:%s\n", s);
-    free(s);
+    
+    if (freePtr)
+        free(freePtr);
 }
 
 \'[a-zA-Z0-9\n\t]\'  {PL; PT(CHAR);}
