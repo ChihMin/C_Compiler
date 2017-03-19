@@ -1,3 +1,11 @@
+SP  (u8|u|U|L)
+ES  (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
+WS  [ \t\v\n\f]
+DB  (([0-9]+\.[0-9]*)|(\.[0-9]+)|([0-9]+\.))
+OP  ("+"|"-"|"*"|"/"|"%"|"++"|"--"|"<"|"<="|">"|">="|"=="|"!="|"="|"&&"|"||"|"!"|"&")
+PU  [\[\]\(\)\{\}:;,\.]
+SS  [\t\ ]
+
 %{
 
 #include <stdio.h>
@@ -25,6 +33,11 @@
     } \
     first_token = 1;
 
+#define ERROR \
+    ++num_lines; \
+    fprintf(stderr, "Error at line %d: %s\n", num_lines, yytext); \
+    exit(1); 
+
 /*
     Type Definition
 */
@@ -44,20 +57,22 @@ int first_token = 1;
 int show_source = 1;
 int show_token = 1;
 char *strptr;
+char *buf;
+
 
 %}
 
-%x SOURCE
-%x TOKEN
+%x INVALID
 %x SHORT_COMMENT
 %x COMMENT
 
 %%
 
-#pragma\ +source\ +off\ * {PL; show_source = 0; }
-#pragma\ +source\ +on\ * {PL; show_source = 1; }
-#pragma\ +token\ +off\ * {PL; show_token = 0; }
-#pragma\ +token\ +on\ * {PL; show_token = 1; }
+#{SS}*pragma{SS}+source{SS}+off{SS}* {PL; show_source = 0; }
+#{SS}*pragma{SS}+source{SS}+on{SS}* {PL; show_source = 1; }
+#{SS}*pragma{SS}+token{SS}+off{SS}* {PL; show_token = 0; }
+#{SS}*pragma{SS}+token{SS}+on{SS}* {PL; show_token = 1; }
+#{SS}*pragma{SS}+[.]* {PL; /*printf("Invalid pragma ... %s\n ... ", yytext);*/ ERROR; }
 
 "//"    { PL; BEGIN SHORT_COMMENT; }
 "/*"    { PL;  BEGIN COMMENT; }
@@ -145,34 +160,21 @@ char *strptr;
 "vsprintf"	{PL; PT(KEY);}
 "vsscanf"	{PL; PT(KEY);}
 
+{OP} {PL; PT(OP);}
+
 [a-zA-Z_][0-9a-zA-Z]*    {PL; PT(ID);}
 
-"+"   {PL; PT(OP); }
-"-"   {PL; PT(OP); }
-"*"   {PL; PT(OP); }
-"/"   {PL; PT(OP); }
-"%"   {PL; PT(OP); }
-"++"   {PL; PT(OP); }
-"--"   {PL; PT(OP); }
-"<"   {PL; PT(OP); }
-"<="   {PL; PT(OP); }
-">"   {PL; PT(OP); }
-">="   {PL; PT(OP); }
-"=="   {PL; PT(OP); }
-"!="   {PL; PT(OP); }
-"="   {PL; PT(OP); }
-"&&"   {PL; PT(OP); }
-"||"   {PL; PT(OP); }
-"!"   {PL; PT(OP); }
-"&"   {PL; PT(OP); }
+{PU} {PL; PT(PUNC);}
 
-[\[\]\(\)\{\}:;,.]    {PL;  PT(PUNC);}
+(([0-9]*)|{DB})[eE][+-]?[0-9]+  {PL; PT(SCI);}
+(([0-9]*)|{DB})[eE][+-]?[[:alnum:]_]* {PL; /* printf("Invalid science notation ... %s ... \n", yytext); */ ERROR; }
+([0-9]+\.[0-9]*)|(\.[0-9]+)|([0-9]+\.)  {PL; PT(DOUBLE);}
+[0-9]+\.([0-9]*[[:alnum:]]*) {PL; /* printf("Invalid const float .... %s ... \n", yytext); */ ERROR; }
+([1-9][0-9]+)|(0) {PL; PT(INT); }
+([1-9]+[[:alnum:]_]*)|(0[[:alnum:]_]+)  {PL; /* printf("Invalid constant integer ... %s ... \n", yytext);*/ ERROR; }
 
-[0-9]+(\.[0-9]+)?[eE][+-]?[0-9]+  {PL; PT(SCI); } 
-[0-9]+\.[0-9]+  {PL; PT(DOUBLE); }
-[0-9]+  {PL; PT(INT);}
 
-\".*\"  {
+({SP}?\"([^"\\\n]|{ES})*\"{WS}*)+  {
     PL;
     char *s = NULL, *freePtr;
     s = (char *)malloc(strlen(yytext) + 5);
@@ -187,10 +189,9 @@ char *strptr;
 }
 
 \'[a-zA-Z0-9\n\t]\'  {PL; PT(CHAR);}
-
+[\ \t]* {PL; }
 \n  {PL;  END;}
-
-. { PL; }
+. { PL; ERROR;}
 %%
 
 int main(int argc, char *argv[]) {
