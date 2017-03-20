@@ -188,7 +188,7 @@ char *buf;
         free(freePtr);
 }
 
-\'[a-zA-Z0-9\n\t]\'  {PL; PT(CHAR);}
+\'((\\\')|(\\\")|(\\\?)|(\\\\)|(\\t)|(\\n)|(.))\'  {PL; PT(CHAR);}
 [\ \t]* {PL; }
 \n  {PL;  END;}
 . { PL; ERROR;}
