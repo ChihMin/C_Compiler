@@ -1,10 +1,8 @@
-SP  (u8|u|U|L)
-ES  (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
-WS  [ \t\v\n\f]
 DB  (([0-9]+\.[0-9]*)|(\.[0-9]+)|([0-9]+\.))
 OP  ("+"|"-"|"*"|"/"|"%"|"++"|"--"|"<"|"<="|">"|">="|"=="|"!="|"="|"&&"|"||"|"!"|"&")
 PU  [\[\]\(\)\{\}:;,\.]
 SS  [\t\ ]
+CH  ((\\\')|(\\\")|(\\\?)|(\\\\)|(\\t)|(\\n)|([^\'\\\n]))
 
 %{
 
@@ -169,12 +167,12 @@ char *buf;
 (([0-9]*)|{DB})[eE][+-]?[0-9]+  {PL; PT(SCI);}
 (([0-9]*)|{DB})[eE][+-]?[[:alnum:]_]* {PL; /* printf("Invalid science notation ... %s ... \n", yytext); */ ERROR; }
 ([0-9]+\.[0-9]*)|(\.[0-9]+)|([0-9]+\.)  {PL; PT(DOUBLE);}
-[0-9]+\.([0-9]*[[:alnum:]]*) {PL; /* printf("Invalid const float .... %s ... \n", yytext); */ ERROR; }
+[0-9]+\.([0-9]*[[:alnum:]_]*) {PL; /* printf("Invalid const float .... %s ... \n", yytext); */ ERROR; }
 ([1-9][0-9]*)|(0) {PL; PT(INT); }
 ([1-9]+[[:alnum:]_]*)|(0[[:alnum:]_]+)  {PL; /* printf("Invalid constant integer ... %s ... \n", yytext);*/ ERROR; }
 
 
-({SP}?\"([^"\\\n]|{ES})*\"{WS}*)+  {
+(\"{CH}*\")  {
     PL;
     char *s = NULL, *freePtr;
     s = (char *)malloc(strlen(yytext) + 5);
@@ -188,7 +186,7 @@ char *buf;
         free(freePtr);
 }
 
-\'((\\\')|(\\\")|(\\\?)|(\\\\)|(\\t)|(\\n)|(.))\'  {PL; PT(CHAR);}
+\'{CH}\'  {PL; PT(CHAR);}
 [\ \t]* {PL; }
 \n  {PL;  END;}
 . { PL; ERROR;}
