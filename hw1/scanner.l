@@ -195,7 +195,9 @@ char *buf;
 int main(int argc, char *argv[]) {
     yylex();
     if (!first_token)   {
-        END; printf("\n");
+        END; 
+        if (show_source)
+            printf("\n");
     }
     return 0;
 }
