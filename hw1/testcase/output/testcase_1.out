@@ -1,0 +1,105 @@
+1:/*
+2: * Testcase_1_comment1
+3: *
+4: *
+5: */
+6:/*
+7:   Testcase_1_comment2
+8:
+9: */
+10:
+11:// Testcase_1_comment3
+12:
+#key:int
+#id:main
+#punc:(
+#punc:)
+#punc:{
+#key:char
+#id:a
+#op:=
+#char:'a'
+#punc:;
+18:#pragma source on
+#key:double
+#id:b
+#op:=
+#double:0.01
+#punc:;
+19:    double b = 0.01;
+20:
+21:#pragma token off
+22:    int i;
+23:
+24:#pragma token on
+#key:int
+#id:c
+#punc:[
+#integer:2
+#punc:]
+#punc:;
+25:    int c[2];
+#key:for
+#punc:(
+#id:i
+#op:=
+#integer:0
+#punc:;
+#id:i
+#op:<
+#integer:2
+#punc:;
+#id:i
+#op:++
+#punc:)
+#punc:{
+26:    for (i = 0; i < 2; i++) {
+#id:c
+#punc:[
+#id:i
+#punc:]
+#op:=
+#id:i
+#punc:;
+27:            c[i] = i;
+#punc:}
+28:        }
+29:
+#key:printf
+#punc:(
+#string:c[1]=%d\n
+#punc:,
+#id:c
+#punc:[
+#integer:1
+#punc:]
+#punc:)
+#punc:;
+30:    printf("c[1]=%d\n", c[1]);
+#key:if
+#punc:(
+#id:c
+#punc:[
+#integer:0
+#punc:]
+#op:>
+#integer:1
+#punc:)
+#punc:{
+31:    if (c[0] > 1){ 
+#id:b
+#op:=
+#id:b
+#op:*
+#sci:99.0e-10
+#punc:;
+32:            b = b * 99.0e-10; 
+#punc:}
+33:        }
+34:
+#key:return
+#integer:0
+#punc:;
+35:    return 0;
+#punc:}
+36:}
