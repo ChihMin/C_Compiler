@@ -165,7 +165,7 @@ char *buf;
 {PU} {PL; PT(PUNC);}
 
 (([0-9]*)|{DB})[eE][+-]?[0-9]+  {PL; PT(SCI);}
-(([0-9]*)|{DB})[eE][+-]?[[:alnum:]_]* {PL; /* printf("Invalid science notation ... %s ... \n", yytext); */ ERROR; }
+(([0-9]*)|{DB})[eE][+-]?[[:alnum:]_\.]* {PL; /* printf("Invalid science notation ... %s ... \n", yytext); */ ERROR; }
 {DB}  {PL; PT(DOUBLE);}
 [0-9]+\.([[:alnum:]_\.]*) {PL; /* printf("Invalid const float .... %s ... \n", yytext); */ ERROR; }
 ([1-9][0-9]*)|(0) {PL; PT(INT); }
