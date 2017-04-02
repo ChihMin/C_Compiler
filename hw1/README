@@ -1,4 +1,5 @@
 1. make
 2. ./scanner < ${INPUT_C_CODE}
-3. 支援的testcase會放在testcase folder底下，在testcase folder 裡面的 output folder 則是擺放testcase的各種output。  .c testcase 的名稱會對應到 .out。e.g. testcase_1.c 會對應到 testcase_1.out
+3. Support testcase will be put under testcase folder.
+4. testcase/output/ is testcase output folder, all output will be put in it.
 
