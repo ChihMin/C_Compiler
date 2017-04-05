@@ -66,11 +66,11 @@ char *buf;
 
 %%
 
-#{SS}*pragma{SS}+source{SS}+off{SS}* {PL; show_source = 0; }
-#{SS}*pragma{SS}+source{SS}+on{SS}* {PL; show_source = 1; }
-#{SS}*pragma{SS}+token{SS}+off{SS}* {PL; show_token = 0; }
-#{SS}*pragma{SS}+token{SS}+on{SS}* {PL; show_token = 1; }
-#{SS}*pragma{SS}+(.)* {PL; /*printf("Invalid pragma ... %s\n ... ", yytext);*/ ERROR; }
+#{SS}*pragma{SS}+source{SS}+off {PL; show_source = 0; }
+#{SS}*pragma{SS}+source{SS}+on {PL; show_source = 1; }
+#{SS}*pragma{SS}+token{SS}+off {PL; show_token = 0; }
+#{SS}*pragma{SS}+token{SS}+on {PL; show_token = 1; }
+#{SS}*pragma{SS}+(source|token){SS}+(on|off)[^{SS}(//)\n]+ {PL; /*printf("Invalid pragma ... %s\n ... ", yytext);*/ ERROR; }
 
 "//"    { PL; BEGIN SHORT_COMMENT; }
 "/*"    { PL;  BEGIN COMMENT; }
