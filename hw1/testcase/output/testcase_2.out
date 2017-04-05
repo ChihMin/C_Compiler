@@ -42,10 +42,7 @@
 #punc:;
 5:    char s[]="123456789";
 #key:double
-#id:_
-#id:_x123
-#id:_
-#id:_
+#id:__x123__
 #op:=
 #double:123.123
 #punc:;
@@ -104,10 +101,7 @@
 #string:123456789
 #punc:;
 #key:double
-#id:_
-#id:_x123
-#id:_
-#id:_
+#id:__x123__
 #op:=
 #double:123.123
 #punc:;
@@ -163,10 +157,7 @@
 #string:123456789
 #punc:;
 #key:double
-#id:_
-#id:_x123
-#id:_
-#id:_
+#id:__x123__
 #op:=
 #double:123.123
 #punc:;
