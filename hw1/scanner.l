@@ -70,7 +70,7 @@ char *buf;
 #{SS}*pragma{SS}+source{SS}+on{SS}* {PL; show_source = 1; }
 #{SS}*pragma{SS}+token{SS}+off{SS}* {PL; show_token = 0; }
 #{SS}*pragma{SS}+token{SS}+on{SS}* {PL; show_token = 1; }
-#{SS}*pragma{SS}+[.]* {PL; /*printf("Invalid pragma ... %s\n ... ", yytext);*/ ERROR; }
+#{SS}*pragma{SS}+(.)* {PL; /*printf("Invalid pragma ... %s\n ... ", yytext);*/ ERROR; }
 
 "//"    { PL; BEGIN SHORT_COMMENT; }
 "/*"    { PL;  BEGIN COMMENT; }
@@ -160,7 +160,7 @@ char *buf;
 
 {OP} {PL; PT(OP);}
 
-[a-zA-Z_][0-9a-zA-Z]*    {PL; PT(ID);}
+[a-zA-Z_][0-9a-zA-Z_]*    {PL; PT(ID);}
 
 {PU} {PL; PT(PUNC);}
 
