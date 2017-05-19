@@ -39,11 +39,18 @@ declare : INTEGER init ';' { dbg("Integer declaration\n"); }
 
 init : init ',' IDENT '=' expr 
      | init ',' IDENT
-     | init ',' array
+     | init ',' arrayinit
      | IDENT '=' expr
      | IDENT
-     | array
+     | arrayinit
      ;
+
+arrayinit : array '=' '{' arrayelements '}'
+          | array
+          ;
+arrayelements : arrayelements ',' expr
+              | expr
+              ;
 
 constdeclare : CONST INTEGER constinit ';'
              | CONST FLOAT constinit ';'
@@ -87,7 +94,7 @@ muldiv : muldiv '*' unary  { dbg("MUL\n"); }
        | muldiv '%' unary  { dbg("MOD\n"); }
        | unary
        ;
-unary : '-' selfop | selfop { dbg("-(unary)\n"); }
+unary : '-' selfop { dbg("-(unary)\n"); } | selfop 
 selfop : arrayidx ADD2 { dbg("ADDDDDDDD\n"); }
        | arrayidx SUB2 { dbg("SUBBBBBBB\n"); }
        | arrayidx
@@ -104,8 +111,6 @@ factor : '(' expr ')' { dbg("Factor-(expr)\n"); }
        ;
 
 array : IDENT arrayparm { dbg("Factor-array\n"); } 
-      ;
-
 arrayparm : arrayparm '[' NUM_INT ']'
           | '[' NUM_INT ']'
           ;
