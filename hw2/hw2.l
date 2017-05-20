@@ -94,16 +94,16 @@ char *buf;
 "do"   {PL; PT(KEY); return DO; }
 "if"   {PL; PT(KEY); return IF; }
 "else"   {PL; PT(KEY); return ELSE; }
-"switch"   {PL; PT(KEY); }
-"return"   {PL; PT(KEY); }
-"break"   {PL; PT(KEY); }
-"continue"   {PL; PT(KEY); }
+"switch"   {PL; PT(KEY); return SWITCH; }
+"return"   {PL; PT(KEY); return RETURN;}
+"break"   {PL; PT(KEY); return BREAK;}
+"continue"   {PL; PT(KEY); return CONTINUE;}
 "const"   {PL; PT(KEY); return CONST; }
 "true"   {PL; PT(KEY); return TRUE; }
 "false"   {PL; PT(KEY); return FALSE; }
 "struct"   {PL; PT(KEY); }
-"case"   {PL; PT(KEY); }
-"default"   {PL; PT(KEY); }
+"case"   {PL; PT(KEY); return CASE; }
+"default"   {PL; PT(KEY); return DEFAULT; }
 
 "clearerr"	{PL; PT(KEY);}
 "fclose"	{PL; PT(KEY);}

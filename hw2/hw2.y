@@ -29,7 +29,7 @@
     double dval;
 }
 
-%token IF ELSE FOR WHILE SWITCH CASE DO
+%token IF ELSE FOR WHILE SWITCH CASE DO DEFAULT RETURN BREAK CONTINUE
 %token NUM_INT IDENT NUM_FLOAT CONST_STR CONST_CHAR TRUE FALSE
 %token VOID INTEGER FLOAT BOOL CHARACTER CONST
 %token ADD2 SUB2 LT LE GT GE EQ NE LOGAND LOGOR LOGNOT BITAND
@@ -120,10 +120,14 @@ statements : statements simplestatement { has_invoke_function = 0; }
            | statements ifelsestatement
            | statements forstatement
            | statements whilestatement
+           | statements switchstatement
+           | statements rbcstatement
            | simplestatement { has_invoke_function = 0; }
            | ifelsestatement
+           | switchstatement
            | whilestatement
-           | forstatement 
+           | forstatement
+           | rbcstatement 
            ;
 simplestatement : IDENT '=' expr ';' { dbg("Statement .. \n"); }
                 | IDENT arrayoper '=' expr ';' { dbg("Array Statement .. \n");}
@@ -135,6 +139,17 @@ whilestatement : WHILE '(' expr ')' scope { dbg("While statement ... \n"); }
                | DO scope WHILE '(' expr ')' ';' { dbg("Do-While statement \n"); } 
 forstatement : FOR '(' forparam ';' forparam ';' forparam ')' scope { dbg("For statement \n"); }
 forparam : | expr
+
+switchstatement : SWITCH '(' IDENT ')' '{' casecontent default '}' { dbg("Switch Statement \n"); }
+casecontent : casecontent CASE caseconst ':' casestatement
+            | CASE caseconst ':' casestatement
+            ;
+caseconst : NUM_INT | CONST_CHAR
+default : | DEFAULT ':' casestatement
+casestatement : | statements
+rbcstatement : RETURN expr ';' { dbg("return expr \n"); }
+             | BREAK ';' { dbg("Break \n"); }
+             | CONTINUE ';' { dbg("Continue \n"); }
 
 expr : expr LOGOR and { dbg("Logic OR\n"); }
      | and
