@@ -1,0 +1,3 @@
+*** Error at line 6: void main(){ if (x) { t = foo(); int
+Unmatched token: int
+*** syntax error

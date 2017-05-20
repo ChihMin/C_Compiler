@@ -1,0 +1,1461 @@
+#key:const
+#key:int
+#id:y
+#op:=
+#integer:123
+#punc:;
+1:const int y = 123;
+#key:int
+#id:g
+#punc:;
+2:int g;
+#key:int
+#id:f
+#punc:(
+#key:int
+#id:x
+#punc:,
+#key:int
+#id:y
+#punc:)
+#punc:{
+3:int f(int x, int y) { 
+#key:int
+#id:x
+#op:=
+#integer:10
+#punc:;
+4:    int x = 10;
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+5:    switch (x) {
+#key:case
+#integer:1
+#punc::
+6:    case 1:
+#key:case
+#char:'x'
+#punc::
+7:    case 'x':
+#key:if
+#punc:(
+#id:x
+#op:>
+#integer:10
+#punc:)
+#punc:{
+8:        if (x > 10) {
+#id:x
+#op:=
+#id:x
+#op:+
+#integer:1
+#punc:;
+9:            x = x +1;
+#punc:}
+#key:else
+#punc:{
+10:        } else {
+#id:y
+#op:=
+#id:y
+#op:+
+#integer:2
+#punc:;
+11:            y = y + 2;
+#punc:}
+12:        }
+#key:default
+#punc::
+13:    default:
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+14:        for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+15:            switch(x) {
+#key:case
+#char:'r'
+#punc::
+16:            case 'r':
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+17:                for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+18:                    switch(x) {
+#key:case
+#char:'r'
+#punc::
+19:                    case 'r':
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+20:    switch (x) {
+#key:case
+#integer:1
+#punc::
+21:    case 1:
+#key:case
+#char:'x'
+#punc::
+22:    case 'x':
+#key:if
+#punc:(
+#id:x
+#op:>
+#integer:10
+#punc:)
+#punc:{
+23:        if (x > 10) {
+#id:x
+#op:=
+#id:x
+#op:+
+#integer:1
+#punc:;
+24:            x = x +1;
+#punc:}
+#key:else
+#punc:{
+25:        } else {
+#id:y
+#op:=
+#id:y
+#op:+
+#integer:2
+#punc:;
+26:            y = y + 2;
+#punc:}
+27:        }
+#key:default
+#punc::
+28:    default:
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+29:        for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+30:            switch(x) {
+#key:case
+#char:'r'
+#punc::
+31:            case 'r':
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+32:                for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+33:                    switch(x) {
+#key:case
+#char:'r'
+#punc::
+34:                    case 'r':
+#key:case
+#char:'g'
+#punc::
+35:                    case 'g':
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+36:    switch (x) {
+#key:case
+#integer:1
+#punc::
+37:    case 1:
+#key:case
+#char:'x'
+#punc::
+38:    case 'x':
+#key:if
+#punc:(
+#id:x
+#op:>
+#integer:10
+#punc:)
+#punc:{
+39:        if (x > 10) {
+#id:x
+#op:=
+#id:x
+#op:+
+#integer:1
+#punc:;
+40:            x = x +1;
+#punc:}
+#key:else
+#punc:{
+41:        } else {
+#id:y
+#op:=
+#id:y
+#op:+
+#integer:2
+#punc:;
+42:            y = y + 2;
+#punc:}
+43:        }
+#key:default
+#punc::
+44:    default:
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+45:        for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+46:            switch(x) {
+#key:case
+#char:'r'
+#punc::
+47:            case 'r':
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+48:                for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+49:                    switch(x) {
+#key:case
+#char:'r'
+#punc::
+50:                    case 'r':
+#key:case
+#char:'g'
+#punc::
+51:                    case 'g':
+#punc:}
+52:                    }
+#punc:}
+53:                }
+#key:case
+#char:'g'
+#punc::
+54:            case 'g':
+#punc:}
+55:            }
+#punc:}
+56:        }
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+57:        switch(x) {
+#key:case
+#char:'r'
+#punc::
+58:        case 'r':
+#key:case
+#char:'g'
+#punc::
+59:        case 'g':
+#punc:}
+60:        }
+#punc:}
+61:    }
+#punc:}
+62:                    }
+#punc:}
+63:                }
+#key:case
+#char:'g'
+#punc::
+64:            case 'g':
+#punc:}
+65:            }
+#punc:}
+66:        }
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+67:        switch(x) {
+#key:case
+#char:'r'
+#punc::
+68:        case 'r':
+#key:case
+#char:'g'
+#punc::
+69:        case 'g':
+#punc:}
+70:        }
+#punc:}
+71:    }
+#key:case
+#char:'g'
+#punc::
+72:                    case 'g':
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+73:    switch (x) {
+#key:case
+#integer:1
+#punc::
+74:    case 1:
+#key:case
+#char:'x'
+#punc::
+75:    case 'x':
+#key:if
+#punc:(
+#id:x
+#op:>
+#integer:10
+#punc:)
+#punc:{
+76:        if (x > 10) {
+#id:x
+#op:=
+#id:x
+#op:+
+#integer:1
+#punc:;
+77:            x = x +1;
+#punc:}
+#key:else
+#punc:{
+78:        } else {
+#id:y
+#op:=
+#id:y
+#op:+
+#integer:2
+#punc:;
+79:            y = y + 2;
+#punc:}
+80:        }
+#key:default
+#punc::
+81:    default:
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+82:        for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+83:            switch(x) {
+#key:case
+#char:'r'
+#punc::
+84:            case 'r':
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+85:                for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+86:                    switch(x) {
+#key:case
+#char:'r'
+#punc::
+87:                    case 'r':
+#key:case
+#char:'g'
+#punc::
+88:                    case 'g':
+#punc:}
+89:                    }
+#punc:}
+90:                }
+#key:case
+#char:'g'
+#punc::
+91:            case 'g':
+#punc:}
+92:            }
+#punc:}
+93:        }
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+94:        switch(x) {
+#key:case
+#char:'r'
+#punc::
+95:        case 'r':
+#key:case
+#char:'g'
+#punc::
+96:        case 'g':
+#punc:}
+97:        }
+#punc:}
+98:    }
+#punc:}
+99:                    }
+#punc:}
+100:                }
+#key:case
+#char:'g'
+#punc::
+101:            case 'g':
+#punc:}
+102:            }
+#punc:}
+103:        }
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+104:        switch(x) {
+#key:case
+#char:'r'
+#punc::
+105:        case 'r':
+#key:case
+#char:'g'
+#punc::
+106:        case 'g':
+#punc:}
+107:        }
+#punc:}
+108:    }
+#punc:}
+109:}
+#key:int
+#id:a
+#punc:[
+#integer:12
+#punc:]
+#punc:[
+#integer:1
+#punc:]
+#op:=
+#punc:{
+#integer:123
+#punc:}
+#punc:;
+110:int a[12][1] = {123};
+#key:int
+#id:x
+#op:=
+#id:a
+#punc:[
+#integer:12
+#punc:]
+#punc:[
+#punc:(
+#integer:2
+#op:*
+#integer:3
+#op:+
+#integer:1
+#punc:)
+#punc:]
+#op:+
+#integer:5
+#punc:;
+111:int x = a[12][(2*3+1)] + 5;
+112:
+#key:int
+#id:f
+#punc:(
+#key:int
+#id:x
+#punc:,
+#key:int
+#id:y
+#punc:)
+#punc:{
+113:int f(int x, int y) { 
+#key:int
+#id:x
+#op:=
+#integer:10
+#punc:;
+114:    int x = 10;
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+115:    switch (x) {
+#key:case
+#integer:1
+#punc::
+116:    case 1:
+#key:case
+#char:'x'
+#punc::
+117:    case 'x':
+#key:if
+#punc:(
+#id:x
+#op:>
+#integer:10
+#punc:)
+#punc:{
+118:        if (x > 10) {
+#id:x
+#op:=
+#id:x
+#op:+
+#integer:1
+#punc:;
+119:            x = x +1;
+#punc:}
+#key:else
+#punc:{
+120:        } else {
+#id:y
+#op:=
+#id:y
+#op:+
+#integer:2
+#punc:;
+121:            y = y + 2;
+#punc:}
+122:        }
+#key:default
+#punc::
+123:    default:
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+124:        for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+125:            switch(x) {
+#key:case
+#char:'r'
+#punc::
+126:            case 'r':
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+127:                for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+128:                    switch(x) {
+#key:case
+#char:'r'
+#punc::
+129:                    case 'r':
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+130:    switch (x) {
+#key:case
+#integer:1
+#punc::
+131:    case 1:
+#key:case
+#char:'x'
+#punc::
+132:    case 'x':
+#key:if
+#punc:(
+#id:x
+#op:>
+#integer:10
+#punc:)
+#punc:{
+133:        if (x > 10) {
+#id:x
+#op:=
+#id:x
+#op:+
+#integer:1
+#punc:;
+134:            x = x +1;
+#punc:}
+#key:else
+#punc:{
+135:        } else {
+#id:y
+#op:=
+#id:y
+#op:+
+#integer:2
+#punc:;
+136:            y = y + 2;
+#punc:}
+137:        }
+#key:default
+#punc::
+138:    default:
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+139:        for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+140:            switch(x) {
+#key:case
+#char:'r'
+#punc::
+141:            case 'r':
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+142:                for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+143:                    switch(x) {
+#key:case
+#char:'r'
+#punc::
+144:                    case 'r':
+#key:case
+#char:'g'
+#punc::
+145:                    case 'g':
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+146:    switch (x) {
+#key:case
+#integer:1
+#punc::
+147:    case 1:
+#key:case
+#char:'x'
+#punc::
+148:    case 'x':
+#key:if
+#punc:(
+#id:x
+#op:>
+#integer:10
+#punc:)
+#punc:{
+149:        if (x > 10) {
+#id:x
+#op:=
+#id:x
+#op:+
+#integer:1
+#punc:;
+150:            x = x +1;
+#punc:}
+#key:else
+#punc:{
+151:        } else {
+#id:y
+#op:=
+#id:y
+#op:+
+#integer:2
+#punc:;
+152:            y = y + 2;
+#punc:}
+153:        }
+#key:default
+#punc::
+154:    default:
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+155:        for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+156:            switch(x) {
+#key:case
+#char:'r'
+#punc::
+157:            case 'r':
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+158:                for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+159:                    switch(x) {
+#key:case
+#char:'r'
+#punc::
+160:                    case 'r':
+#key:do
+#punc:{
+161:                    do {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+162:    switch (x) {
+#key:case
+#integer:1
+#punc::
+163:    case 1:
+#key:case
+#char:'x'
+#punc::
+164:    case 'x':
+#key:if
+#punc:(
+#id:x
+#op:>
+#integer:10
+#punc:)
+#punc:{
+165:        if (x > 10) {
+#id:x
+#op:=
+#id:x
+#op:+
+#integer:1
+#punc:;
+166:            x = x +1;
+#punc:}
+#key:else
+#punc:{
+167:        } else {
+#id:y
+#op:=
+#id:y
+#op:+
+#integer:2
+#punc:;
+168:            y = y + 2;
+#punc:}
+169:        }
+#key:default
+#punc::
+170:    default:
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+171:        for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+172:            switch(x) {
+#key:case
+#char:'r'
+#punc::
+173:            case 'r':
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+174:                for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+175:                    switch(x) {
+#key:case
+#char:'r'
+#punc::
+176:                    case 'r':
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+177:    switch (x) {
+#key:case
+#integer:1
+#punc::
+178:    case 1:
+#key:case
+#char:'x'
+#punc::
+179:    case 'x':
+#key:if
+#punc:(
+#id:x
+#op:>
+#integer:10
+#punc:)
+#punc:{
+180:        if (x > 10) {
+#id:x
+#op:=
+#id:x
+#op:+
+#integer:1
+#punc:;
+181:            x = x +1;
+#punc:}
+#key:else
+#punc:{
+182:        } else {
+#id:y
+#op:=
+#id:y
+#op:+
+#integer:2
+#punc:;
+183:            y = y + 2;
+#punc:}
+184:        }
+#key:default
+#punc::
+185:    default:
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+186:        for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+187:            switch(x) {
+#key:case
+#char:'r'
+#punc::
+188:            case 'r':
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+189:                for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+190:                    switch(x) {
+#key:case
+#char:'r'
+#punc::
+191:                    case 'r':
+#key:case
+#char:'g'
+#punc::
+192:                    case 'g':
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+193:    switch (x) {
+#key:case
+#integer:1
+#punc::
+194:    case 1:
+#key:case
+#char:'x'
+#punc::
+195:    case 'x':
+#key:if
+#punc:(
+#id:x
+#op:>
+#integer:10
+#punc:)
+#punc:{
+196:        if (x > 10) {
+#id:x
+#op:=
+#id:x
+#op:+
+#integer:1
+#punc:;
+197:            x = x +1;
+#punc:}
+#key:else
+#punc:{
+198:        } else {
+#id:y
+#op:=
+#id:y
+#op:+
+#integer:2
+#punc:;
+199:            y = y + 2;
+#punc:}
+200:        }
+#key:default
+#punc::
+201:    default:
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+202:        for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+203:            switch(x) {
+#key:case
+#char:'r'
+#punc::
+204:            case 'r':
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+205:                for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+206:                    switch(x) {
+#key:case
+#char:'r'
+#punc::
+207:                    case 'r':
+#key:do
+#punc:{
+208:                    do {
+#punc:}
+#key:while
+#punc:(
+#integer:0
+#punc:)
+#punc:;
+209:                    } while(0);
+#key:case
+#char:'g'
+#punc::
+210:                    case 'g':
+#punc:}
+211:                    }
+#punc:}
+212:                }
+#key:case
+#char:'g'
+#punc::
+213:            case 'g':
+#punc:}
+214:            }
+#punc:}
+215:        }
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+216:        switch(x) {
+#key:case
+#char:'r'
+#punc::
+217:        case 'r':
+#key:case
+#char:'g'
+#punc::
+218:        case 'g':
+#punc:}
+219:        }
+#punc:}
+220:    }
+#punc:}
+221:                    }
+#punc:}
+222:                }
+#key:case
+#char:'g'
+#punc::
+223:            case 'g':
+#punc:}
+224:            }
+#punc:}
+225:        }
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+226:        switch(x) {
+#key:case
+#char:'r'
+#punc::
+227:        case 'r':
+#key:case
+#char:'g'
+#punc::
+228:        case 'g':
+#punc:}
+229:        }
+#punc:}
+230:    }
+#key:case
+#char:'g'
+#punc::
+231:                    case 'g':
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+232:    switch (x) {
+#key:case
+#integer:1
+#punc::
+233:    case 1:
+#key:case
+#char:'x'
+#punc::
+234:    case 'x':
+#key:if
+#punc:(
+#id:x
+#op:>
+#integer:10
+#punc:)
+#punc:{
+235:        if (x > 10) {
+#id:x
+#op:=
+#id:x
+#op:+
+#integer:1
+#punc:;
+236:            x = x +1;
+#punc:}
+#key:else
+#punc:{
+237:        } else {
+#id:y
+#op:=
+#id:y
+#op:+
+#integer:2
+#punc:;
+238:            y = y + 2;
+#punc:}
+239:        }
+#key:default
+#punc::
+240:    default:
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+241:        for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+242:            switch(x) {
+#key:case
+#char:'r'
+#punc::
+243:            case 'r':
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+244:                for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+245:                    switch(x) {
+#key:case
+#char:'r'
+#punc::
+246:                    case 'r':
+#key:case
+#char:'g'
+#punc::
+247:                    case 'g':
+#punc:}
+248:                    }
+#punc:}
+249:                }
+#key:case
+#char:'g'
+#punc::
+250:            case 'g':
+#punc:}
+251:            }
+#punc:}
+252:        }
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+253:        switch(x) {
+#key:case
+#char:'r'
+#punc::
+254:        case 'r':
+#key:case
+#char:'g'
+#punc::
+255:        case 'g':
+#punc:}
+256:        }
+#punc:}
+257:    }
+#punc:}
+258:                    }
+#punc:}
+259:                }
+#key:case
+#char:'g'
+#punc::
+260:            case 'g':
+#punc:}
+261:            }
+#punc:}
+262:        }
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+263:        switch(x) {
+#key:case
+#char:'r'
+#punc::
+264:        case 'r':
+#key:case
+#char:'g'
+#punc::
+265:        case 'g':
+#punc:}
+266:        }
+#punc:}
+267:    }
+#punc:}
+#key:while
+#punc:(
+#integer:0
+#punc:)
+#punc:;
+268:                    } while(0);
+#key:case
+#char:'g'
+#punc::
+269:                    case 'g':
+#punc:}
+270:                    }
+#punc:}
+271:                }
+#key:case
+#char:'g'
+#punc::
+272:            case 'g':
+#punc:}
+273:            }
+#punc:}
+274:        }
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+275:        switch(x) {
+#key:case
+#char:'r'
+#punc::
+276:        case 'r':
+#key:case
+#char:'g'
+#punc::
+277:        case 'g':
+#punc:}
+278:        }
+#punc:}
+279:    }
+#punc:}
+280:                    }
+#punc:}
+281:                }
+#key:case
+#char:'g'
+#punc::
+282:            case 'g':
+#punc:}
+283:            }
+#punc:}
+284:        }
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+285:        switch(x) {
+#key:case
+#char:'r'
+#punc::
+286:        case 'r':
+#key:case
+#char:'g'
+#punc::
+287:        case 'g':
+#punc:}
+288:        }
+#punc:}
+289:    }
+#key:case
+#char:'g'
+#punc::
+290:                    case 'g':
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+291:    switch (x) {
+#key:case
+#integer:1
+#punc::
+292:    case 1:
+#key:case
+#char:'x'
+#punc::
+293:    case 'x':
+#key:if
+#punc:(
+#id:x
+#op:>
+#integer:10
+#punc:)
+#punc:{
+294:        if (x > 10) {
+#id:x
+#op:=
+#id:x
+#op:+
+#integer:1
+#punc:;
+295:            x = x +1;
+#punc:}
+#key:else
+#punc:{
+296:        } else {
+#id:y
+#op:=
+#id:y
+#op:+
+#integer:2
+#punc:;
+297:            y = y + 2;
+#punc:}
+298:        }
+#key:default
+#punc::
+299:    default:
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+300:        for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+301:            switch(x) {
+#key:case
+#char:'r'
+#punc::
+302:            case 'r':
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+303:                for (;;) {
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+304:                    switch(x) {
+#key:case
+#char:'r'
+#punc::
+305:                    case 'r':
+#key:case
+#char:'g'
+#punc::
+306:                    case 'g':
+#punc:}
+307:                    }
+#punc:}
+308:                }
+#key:case
+#char:'g'
+#punc::
+309:            case 'g':
+#punc:}
+310:            }
+#punc:}
+311:        }
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+312:        switch(x) {
+#key:case
+#char:'r'
+#punc::
+313:        case 'r':
+#key:case
+#char:'g'
+#punc::
+314:        case 'g':
+#punc:}
+315:        }
+#punc:}
+316:    }
+#punc:}
+317:                    }
+#punc:}
+318:                }
+#key:case
+#char:'g'
+#punc::
+319:            case 'g':
+#punc:}
+320:            }
+#punc:}
+321:        }
+#key:switch
+#punc:(
+#id:x
+#punc:)
+#punc:{
+322:        switch(x) {
+#key:case
+#char:'r'
+#punc::
+323:        case 'r':
+#key:case
+#char:'g'
+#punc::
+324:        case 'g':
+#punc:}
+325:        }
+#punc:}
+326:    }
+#punc:}
+327:}
+No syntax error!
