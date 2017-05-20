@@ -29,6 +29,7 @@
     double dval;
 }
 
+%token IF ELSE FOR WHILE SWITCH CASE DO
 %token NUM_INT IDENT NUM_FLOAT CONST_STR CONST_CHAR TRUE FALSE
 %token VOID INTEGER FLOAT BOOL CHARACTER CONST
 %token ADD2 SUB2 LT LE GT GE EQ NE LOGAND LOGOR LOGNOT BITAND
@@ -104,23 +105,36 @@ constinit : constinit ',' IDENT '=' CONST_CHAR
           | IDENT '=' TRUE
           | IDENT '=' FALSE
           ;
-
-funcdefine : functiontype '{' localdeclare statements '}'
-           | functiontype '{' statements '}'
-           | functiontype '{' localdeclare '}'
-           | functiontype '{' '}'
-           ;
+funcdefine : functiontype scope
+scope :  '{' localdeclare statements '}'
+      |  '{' statements '}'
+      |  '{' localdeclare '}'
+      |  '{' '}'
+      ;
 localdeclare : localdeclare constdeclare
              | localdeclare declare { DET_FUNC; } 
              | constdeclare
              | declare { DET_FUNC; }
              ; 
 statements : statements simplestatement { has_invoke_function = 0; }
-           | simplestatement { has_invoke_function = 0; } 
+           | statements ifelsestatement
+           | statements forstatement
+           | statements whilestatement
+           | simplestatement { has_invoke_function = 0; }
+           | ifelsestatement
+           | whilestatement
+           | forstatement 
            ;
 simplestatement : IDENT '=' expr ';' { dbg("Statement .. \n"); }
                 | IDENT arrayoper '=' expr ';' { dbg("Array Statement .. \n");}
                 ;
+ifelsestatement : IF '(' expr ')' scope { dbg("Only if statement\n"); }
+                | IF '(' expr ')' scope ELSE scope { dbg("IF-ELSE Statement\n"); }
+                ;
+whilestatement : WHILE '(' expr ')' scope { dbg("While statement ... \n"); }
+               | DO scope WHILE '(' expr ')' ';' { dbg("Do-While statement \n"); } 
+forstatement : FOR '(' forparam ';' forparam ';' forparam ')' scope { dbg("For statement \n"); }
+forparam : | expr
 
 expr : expr LOGOR and { dbg("Logic OR\n"); }
      | and

@@ -89,11 +89,11 @@ char *buf;
 "bool"   {PL; PT(KEY); return BOOL; }
 "char"   {PL; PT(KEY); return CHARACTER; }
 "null"   {PL; PT(KEY); }
-"for"   {PL; PT(KEY); }
-"while"   {PL; PT(KEY); }
-"do"   {PL; PT(KEY); }
-"if"   {PL; PT(KEY); }
-"else"   {PL; PT(KEY); }
+"for"   {PL; PT(KEY); return FOR; }
+"while"   {PL; PT(KEY); return WHILE; }
+"do"   {PL; PT(KEY); return DO; }
+"if"   {PL; PT(KEY); return IF; }
+"else"   {PL; PT(KEY); return ELSE; }
 "switch"   {PL; PT(KEY); }
 "return"   {PL; PT(KEY); }
 "break"   {PL; PT(KEY); }
