@@ -211,6 +211,7 @@ arrayparm : arrayparm '[' NUM_INT ']'
 %%
 
 int main() {
+    
     yyparse();
     if (!func_count)
         yyerror(NULL);
@@ -227,6 +228,8 @@ extern char *strptr;
 
 #define END \
     do { \
+        if (strptr == NULL) \
+            break;\
         fprintf(stderr, "%c", *strptr);  \
         strptr++; \
     } while (*strptr != '\n' && *strptr != '\0'); \
