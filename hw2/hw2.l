@@ -20,7 +20,7 @@ CH  ((\\\')|(\\\")|(\\\?)|(\\\\)|(\\t)|(\\n)|([^\'\\\n]))
         printf("#%s:%s\n", type, yytext);
 
 #define END \
-    ++num_lines; \
+    old_lines = num_lines++ ;\
     if (show_source) { \
         last_strptr = strptr; \
         printf("%d:", num_lines); \
@@ -52,6 +52,7 @@ const char CHAR[] = "char";
 const char SCI[] = "sci";
 const char STRING[] = "string";
 
+int old_lines;
 int num_lines = 0, num_chars = 0;
 int first_token = 1;
 int show_source = 1;

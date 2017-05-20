@@ -1,0 +1,2368 @@
+   0  $accept : context $end
+
+   1  context : context globaldeclare
+   2          | context funcdefine
+   3          | globaldeclare
+   4          | funcdefine
+
+   5  globaldeclare : functiondeclare
+   6                | constdeclare
+   7                | declare
+
+   8  declare : INTEGER init ';'
+   9          | FLOAT init ';'
+  10          | BOOL init ';'
+  11          | CHARACTER init ';'
+
+  12  init : init ',' IDENT '=' expr
+  13       | init ',' IDENT
+  14       | init ',' arrayinit
+  15       | IDENT '=' expr
+  16       | IDENT
+  17       | arrayinit
+
+  18  arrayinit : array '=' '{' arrayelements '}'
+  19            | array
+
+  20  arrayelements : arrayelements ',' expr
+  21                | expr
+
+  22  functiondeclare : functiontype ';'
+
+  23  functiontype : VOID IDENT '(' parameters ')'
+  24               | BOOL IDENT '(' parameters ')'
+  25               | CHARACTER IDENT '(' parameters ')'
+  26               | FLOAT IDENT '(' parameters ')'
+  27               | INTEGER IDENT '(' parameters ')'
+
+  28  parameters : parameters ',' para
+  29             | para
+  30             |
+
+  31  para : nonvoidtypes IDENT
+  32       | nonvoidtypes array
+
+  33  nonvoidtypes : BOOL
+  34               | CHARACTER
+  35               | FLOAT
+  36               | INTEGER
+
+  37  constdeclare : CONST nonvoidtypes constinit ';'
+
+  38  constinit : constinit ',' IDENT '=' CONST_CHAR
+  39            | constinit ',' IDENT '=' CONST_STR
+  40            | constinit ',' IDENT '=' NUM_INT
+  41            | constinit ',' IDENT '=' NUM_FLOAT
+  42            | constinit ',' IDENT '=' TRUE
+  43            | constinit ',' IDENT '=' FALSE
+  44            | IDENT '=' CONST_CHAR
+  45            | IDENT '=' CONST_STR
+  46            | IDENT '=' NUM_INT
+  47            | IDENT '=' NUM_FLOAT
+  48            | IDENT '=' TRUE
+  49            | IDENT '=' FALSE
+
+  50  funcdefine : '{' localdeclare statements '}'
+
+  51  localdeclare : localdeclare constdeclare
+  52               | localdeclare declare
+  53               | constdeclare
+  54               | declare
+  55               |
+
+  56  statements : statements simplestatement
+  57             | simplestatement
+  58             |
+
+  59  simplestatement : IDENT '=' expr ';'
+  60                  | IDENT arrayoper '=' expr ';'
+
+  61  expr : expr LOGOR and
+  62       | and
+
+  63  and : and LOGAND not
+  64      | not
+
+  65  not : LOGNOT cmp
+  66      | cmp
+
+  67  cmp : cmp NE addsub
+  68      | cmp GT addsub
+  69      | cmp GE addsub
+  70      | cmp EQ addsub
+  71      | cmp LE addsub
+  72      | cmp LT addsub
+  73      | addsub
+
+  74  addsub : addsub '+' muldiv
+  75         | addsub '-' muldiv
+  76         | muldiv
+
+  77  muldiv : muldiv '*' unary
+  78         | muldiv '/' unary
+  79         | muldiv '%' unary
+  80         | unary
+
+  81  unary : '-' selfop
+  82        | selfop
+
+  83  selfop : factor ADD2
+  84         | factor SUB2
+  85         | factor
+
+  86  factor : '(' expr ')'
+  87         | IDENT arrayoper
+  88         | IDENT
+  89         | NUM_INT
+  90         | NUM_FLOAT
+  91         | CONST_STR
+  92         | CONST_CHAR
+  93         | TRUE
+  94         | FALSE
+  95         | IDENT '(' funcparams ')'
+
+  96  arrayoper : arrayoper '[' expr ']'
+  97            | '[' expr ']'
+
+  98  funcparams : funcparams ',' expr
+  99             | expr
+ 100             |
+
+ 101  array : IDENT arrayparm
+
+ 102  arrayparm : arrayparm '[' NUM_INT ']'
+ 103            | '[' NUM_INT ']'
+
+state 0
+	$accept : . context $end  (0)
+
+	VOID  shift 1
+	INTEGER  shift 2
+	FLOAT  shift 3
+	BOOL  shift 4
+	CHARACTER  shift 5
+	CONST  shift 6
+	'{'  shift 7
+	.  error
+
+	context  goto 8
+	globaldeclare  goto 9
+	funcdefine  goto 10
+	functiondeclare  goto 11
+	constdeclare  goto 12
+	declare  goto 13
+	functiontype  goto 14
+
+
+state 1
+	functiontype : VOID . IDENT '(' parameters ')'  (23)
+
+	IDENT  shift 15
+	.  error
+
+
+state 2
+	declare : INTEGER . init ';'  (8)
+	functiontype : INTEGER . IDENT '(' parameters ')'  (27)
+
+	IDENT  shift 16
+	.  error
+
+	init  goto 17
+	arrayinit  goto 18
+	array  goto 19
+
+
+state 3
+	declare : FLOAT . init ';'  (9)
+	functiontype : FLOAT . IDENT '(' parameters ')'  (26)
+
+	IDENT  shift 20
+	.  error
+
+	init  goto 21
+	arrayinit  goto 18
+	array  goto 19
+
+
+state 4
+	declare : BOOL . init ';'  (10)
+	functiontype : BOOL . IDENT '(' parameters ')'  (24)
+
+	IDENT  shift 22
+	.  error
+
+	init  goto 23
+	arrayinit  goto 18
+	array  goto 19
+
+
+state 5
+	declare : CHARACTER . init ';'  (11)
+	functiontype : CHARACTER . IDENT '(' parameters ')'  (25)
+
+	IDENT  shift 24
+	.  error
+
+	init  goto 25
+	arrayinit  goto 18
+	array  goto 19
+
+
+state 6
+	constdeclare : CONST . nonvoidtypes constinit ';'  (37)
+
+	INTEGER  shift 26
+	FLOAT  shift 27
+	BOOL  shift 28
+	CHARACTER  shift 29
+	.  error
+
+	nonvoidtypes  goto 30
+
+
+7: shift/reduce conflict (shift 31, reduce 55) on INTEGER
+7: shift/reduce conflict (shift 32, reduce 55) on FLOAT
+7: shift/reduce conflict (shift 33, reduce 55) on BOOL
+7: shift/reduce conflict (shift 34, reduce 55) on CHARACTER
+7: shift/reduce conflict (shift 6, reduce 55) on CONST
+state 7
+	funcdefine : '{' . localdeclare statements '}'  (50)
+	localdeclare : .  (55)
+
+	INTEGER  shift 31
+	FLOAT  shift 32
+	BOOL  shift 33
+	CHARACTER  shift 34
+	CONST  shift 6
+	IDENT  reduce 55
+	'}'  reduce 55
+
+	constdeclare  goto 35
+	declare  goto 36
+	localdeclare  goto 37
+
+
+state 8
+	$accept : context . $end  (0)
+	context : context . globaldeclare  (1)
+	context : context . funcdefine  (2)
+
+	$end  accept
+	VOID  shift 1
+	INTEGER  shift 2
+	FLOAT  shift 3
+	BOOL  shift 4
+	CHARACTER  shift 5
+	CONST  shift 6
+	'{'  shift 7
+	.  error
+
+	globaldeclare  goto 38
+	funcdefine  goto 39
+	functiondeclare  goto 11
+	constdeclare  goto 12
+	declare  goto 13
+	functiontype  goto 14
+
+
+state 9
+	context : globaldeclare .  (3)
+
+	.  reduce 3
+
+
+state 10
+	context : funcdefine .  (4)
+
+	.  reduce 4
+
+
+state 11
+	globaldeclare : functiondeclare .  (5)
+
+	.  reduce 5
+
+
+state 12
+	globaldeclare : constdeclare .  (6)
+
+	.  reduce 6
+
+
+state 13
+	globaldeclare : declare .  (7)
+
+	.  reduce 7
+
+
+state 14
+	functiondeclare : functiontype . ';'  (22)
+
+	';'  shift 40
+	.  error
+
+
+state 15
+	functiontype : VOID IDENT . '(' parameters ')'  (23)
+
+	'('  shift 41
+	.  error
+
+
+state 16
+	init : IDENT . '=' expr  (15)
+	init : IDENT .  (16)
+	functiontype : INTEGER IDENT . '(' parameters ')'  (27)
+	array : IDENT . arrayparm  (101)
+
+	'='  shift 42
+	'('  shift 43
+	'['  shift 44
+	';'  reduce 16
+	','  reduce 16
+
+	arrayparm  goto 45
+
+
+state 17
+	declare : INTEGER init . ';'  (8)
+	init : init . ',' IDENT '=' expr  (12)
+	init : init . ',' IDENT  (13)
+	init : init . ',' arrayinit  (14)
+
+	';'  shift 46
+	','  shift 47
+	.  error
+
+
+state 18
+	init : arrayinit .  (17)
+
+	.  reduce 17
+
+
+state 19
+	arrayinit : array . '=' '{' arrayelements '}'  (18)
+	arrayinit : array .  (19)
+
+	'='  shift 48
+	';'  reduce 19
+	','  reduce 19
+
+
+state 20
+	init : IDENT . '=' expr  (15)
+	init : IDENT .  (16)
+	functiontype : FLOAT IDENT . '(' parameters ')'  (26)
+	array : IDENT . arrayparm  (101)
+
+	'='  shift 42
+	'('  shift 49
+	'['  shift 44
+	';'  reduce 16
+	','  reduce 16
+
+	arrayparm  goto 45
+
+
+state 21
+	declare : FLOAT init . ';'  (9)
+	init : init . ',' IDENT '=' expr  (12)
+	init : init . ',' IDENT  (13)
+	init : init . ',' arrayinit  (14)
+
+	';'  shift 50
+	','  shift 47
+	.  error
+
+
+state 22
+	init : IDENT . '=' expr  (15)
+	init : IDENT .  (16)
+	functiontype : BOOL IDENT . '(' parameters ')'  (24)
+	array : IDENT . arrayparm  (101)
+
+	'='  shift 42
+	'('  shift 51
+	'['  shift 44
+	';'  reduce 16
+	','  reduce 16
+
+	arrayparm  goto 45
+
+
+state 23
+	declare : BOOL init . ';'  (10)
+	init : init . ',' IDENT '=' expr  (12)
+	init : init . ',' IDENT  (13)
+	init : init . ',' arrayinit  (14)
+
+	';'  shift 52
+	','  shift 47
+	.  error
+
+
+state 24
+	init : IDENT . '=' expr  (15)
+	init : IDENT .  (16)
+	functiontype : CHARACTER IDENT . '(' parameters ')'  (25)
+	array : IDENT . arrayparm  (101)
+
+	'='  shift 42
+	'('  shift 53
+	'['  shift 44
+	';'  reduce 16
+	','  reduce 16
+
+	arrayparm  goto 45
+
+
+state 25
+	declare : CHARACTER init . ';'  (11)
+	init : init . ',' IDENT '=' expr  (12)
+	init : init . ',' IDENT  (13)
+	init : init . ',' arrayinit  (14)
+
+	';'  shift 54
+	','  shift 47
+	.  error
+
+
+state 26
+	nonvoidtypes : INTEGER .  (36)
+
+	.  reduce 36
+
+
+state 27
+	nonvoidtypes : FLOAT .  (35)
+
+	.  reduce 35
+
+
+state 28
+	nonvoidtypes : BOOL .  (33)
+
+	.  reduce 33
+
+
+state 29
+	nonvoidtypes : CHARACTER .  (34)
+
+	.  reduce 34
+
+
+state 30
+	constdeclare : CONST nonvoidtypes . constinit ';'  (37)
+
+	IDENT  shift 55
+	.  error
+
+	constinit  goto 56
+
+
+state 31
+	declare : INTEGER . init ';'  (8)
+
+	IDENT  shift 57
+	.  error
+
+	init  goto 17
+	arrayinit  goto 18
+	array  goto 19
+
+
+state 32
+	declare : FLOAT . init ';'  (9)
+
+	IDENT  shift 57
+	.  error
+
+	init  goto 21
+	arrayinit  goto 18
+	array  goto 19
+
+
+state 33
+	declare : BOOL . init ';'  (10)
+
+	IDENT  shift 57
+	.  error
+
+	init  goto 23
+	arrayinit  goto 18
+	array  goto 19
+
+
+state 34
+	declare : CHARACTER . init ';'  (11)
+
+	IDENT  shift 57
+	.  error
+
+	init  goto 25
+	arrayinit  goto 18
+	array  goto 19
+
+
+state 35
+	localdeclare : constdeclare .  (53)
+
+	.  reduce 53
+
+
+state 36
+	localdeclare : declare .  (54)
+
+	.  reduce 54
+
+
+37: shift/reduce conflict (shift 58, reduce 58) on IDENT
+state 37
+	funcdefine : '{' localdeclare . statements '}'  (50)
+	localdeclare : localdeclare . constdeclare  (51)
+	localdeclare : localdeclare . declare  (52)
+	statements : .  (58)
+
+	IDENT  shift 58
+	INTEGER  shift 31
+	FLOAT  shift 32
+	BOOL  shift 33
+	CHARACTER  shift 34
+	CONST  shift 6
+	'}'  reduce 58
+
+	constdeclare  goto 59
+	declare  goto 60
+	statements  goto 61
+	simplestatement  goto 62
+
+
+state 38
+	context : context globaldeclare .  (1)
+
+	.  reduce 1
+
+
+state 39
+	context : context funcdefine .  (2)
+
+	.  reduce 2
+
+
+state 40
+	functiondeclare : functiontype ';' .  (22)
+
+	.  reduce 22
+
+
+state 41
+	functiontype : VOID IDENT '(' . parameters ')'  (23)
+	parameters : .  (30)
+
+	INTEGER  shift 26
+	FLOAT  shift 27
+	BOOL  shift 28
+	CHARACTER  shift 29
+	','  reduce 30
+	')'  reduce 30
+
+	parameters  goto 63
+	para  goto 64
+	nonvoidtypes  goto 65
+
+
+state 42
+	init : IDENT '=' . expr  (15)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	LOGNOT  shift 73
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	expr  goto 76
+	and  goto 77
+	not  goto 78
+	cmp  goto 79
+	addsub  goto 80
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 43
+	functiontype : INTEGER IDENT '(' . parameters ')'  (27)
+	parameters : .  (30)
+
+	INTEGER  shift 26
+	FLOAT  shift 27
+	BOOL  shift 28
+	CHARACTER  shift 29
+	','  reduce 30
+	')'  reduce 30
+
+	parameters  goto 85
+	para  goto 64
+	nonvoidtypes  goto 65
+
+
+state 44
+	arrayparm : '[' . NUM_INT ']'  (103)
+
+	NUM_INT  shift 86
+	.  error
+
+
+state 45
+	array : IDENT arrayparm .  (101)
+	arrayparm : arrayparm . '[' NUM_INT ']'  (102)
+
+	'['  shift 87
+	';'  reduce 101
+	','  reduce 101
+	'='  reduce 101
+	')'  reduce 101
+
+
+state 46
+	declare : INTEGER init ';' .  (8)
+
+	.  reduce 8
+
+
+state 47
+	init : init ',' . IDENT '=' expr  (12)
+	init : init ',' . IDENT  (13)
+	init : init ',' . arrayinit  (14)
+
+	IDENT  shift 88
+	.  error
+
+	arrayinit  goto 89
+	array  goto 19
+
+
+state 48
+	arrayinit : array '=' . '{' arrayelements '}'  (18)
+
+	'{'  shift 90
+	.  error
+
+
+state 49
+	functiontype : FLOAT IDENT '(' . parameters ')'  (26)
+	parameters : .  (30)
+
+	INTEGER  shift 26
+	FLOAT  shift 27
+	BOOL  shift 28
+	CHARACTER  shift 29
+	','  reduce 30
+	')'  reduce 30
+
+	parameters  goto 91
+	para  goto 64
+	nonvoidtypes  goto 65
+
+
+state 50
+	declare : FLOAT init ';' .  (9)
+
+	.  reduce 9
+
+
+state 51
+	functiontype : BOOL IDENT '(' . parameters ')'  (24)
+	parameters : .  (30)
+
+	INTEGER  shift 26
+	FLOAT  shift 27
+	BOOL  shift 28
+	CHARACTER  shift 29
+	','  reduce 30
+	')'  reduce 30
+
+	parameters  goto 92
+	para  goto 64
+	nonvoidtypes  goto 65
+
+
+state 52
+	declare : BOOL init ';' .  (10)
+
+	.  reduce 10
+
+
+state 53
+	functiontype : CHARACTER IDENT '(' . parameters ')'  (25)
+	parameters : .  (30)
+
+	INTEGER  shift 26
+	FLOAT  shift 27
+	BOOL  shift 28
+	CHARACTER  shift 29
+	','  reduce 30
+	')'  reduce 30
+
+	parameters  goto 93
+	para  goto 64
+	nonvoidtypes  goto 65
+
+
+state 54
+	declare : CHARACTER init ';' .  (11)
+
+	.  reduce 11
+
+
+state 55
+	constinit : IDENT . '=' CONST_CHAR  (44)
+	constinit : IDENT . '=' CONST_STR  (45)
+	constinit : IDENT . '=' NUM_INT  (46)
+	constinit : IDENT . '=' NUM_FLOAT  (47)
+	constinit : IDENT . '=' TRUE  (48)
+	constinit : IDENT . '=' FALSE  (49)
+
+	'='  shift 94
+	.  error
+
+
+state 56
+	constdeclare : CONST nonvoidtypes constinit . ';'  (37)
+	constinit : constinit . ',' IDENT '=' CONST_CHAR  (38)
+	constinit : constinit . ',' IDENT '=' CONST_STR  (39)
+	constinit : constinit . ',' IDENT '=' NUM_INT  (40)
+	constinit : constinit . ',' IDENT '=' NUM_FLOAT  (41)
+	constinit : constinit . ',' IDENT '=' TRUE  (42)
+	constinit : constinit . ',' IDENT '=' FALSE  (43)
+
+	';'  shift 95
+	','  shift 96
+	.  error
+
+
+state 57
+	init : IDENT . '=' expr  (15)
+	init : IDENT .  (16)
+	array : IDENT . arrayparm  (101)
+
+	'='  shift 42
+	'['  shift 44
+	';'  reduce 16
+	','  reduce 16
+
+	arrayparm  goto 45
+
+
+state 58
+	simplestatement : IDENT . '=' expr ';'  (59)
+	simplestatement : IDENT . arrayoper '=' expr ';'  (60)
+
+	'='  shift 97
+	'['  shift 98
+	.  error
+
+	arrayoper  goto 99
+
+
+state 59
+	localdeclare : localdeclare constdeclare .  (51)
+
+	.  reduce 51
+
+
+state 60
+	localdeclare : localdeclare declare .  (52)
+
+	.  reduce 52
+
+
+state 61
+	funcdefine : '{' localdeclare statements . '}'  (50)
+	statements : statements . simplestatement  (56)
+
+	IDENT  shift 58
+	'}'  shift 100
+	.  error
+
+	simplestatement  goto 101
+
+
+state 62
+	statements : simplestatement .  (57)
+
+	.  reduce 57
+
+
+state 63
+	functiontype : VOID IDENT '(' parameters . ')'  (23)
+	parameters : parameters . ',' para  (28)
+
+	','  shift 102
+	')'  shift 103
+	.  error
+
+
+state 64
+	parameters : para .  (29)
+
+	.  reduce 29
+
+
+state 65
+	para : nonvoidtypes . IDENT  (31)
+	para : nonvoidtypes . array  (32)
+
+	IDENT  shift 104
+	.  error
+
+	array  goto 105
+
+
+state 66
+	factor : NUM_INT .  (89)
+
+	.  reduce 89
+
+
+state 67
+	factor : IDENT . arrayoper  (87)
+	factor : IDENT .  (88)
+	factor : IDENT . '(' funcparams ')'  (95)
+
+	'('  shift 106
+	'['  shift 98
+	ADD2  reduce 88
+	SUB2  reduce 88
+	LT  reduce 88
+	LE  reduce 88
+	GT  reduce 88
+	GE  reduce 88
+	EQ  reduce 88
+	NE  reduce 88
+	LOGAND  reduce 88
+	LOGOR  reduce 88
+	';'  reduce 88
+	','  reduce 88
+	'}'  reduce 88
+	')'  reduce 88
+	'+'  reduce 88
+	'-'  reduce 88
+	'*'  reduce 88
+	'/'  reduce 88
+	'%'  reduce 88
+	']'  reduce 88
+
+	arrayoper  goto 107
+
+
+state 68
+	factor : NUM_FLOAT .  (90)
+
+	.  reduce 90
+
+
+state 69
+	factor : CONST_STR .  (91)
+
+	.  reduce 91
+
+
+state 70
+	factor : CONST_CHAR .  (92)
+
+	.  reduce 92
+
+
+state 71
+	factor : TRUE .  (93)
+
+	.  reduce 93
+
+
+state 72
+	factor : FALSE .  (94)
+
+	.  reduce 94
+
+
+state 73
+	not : LOGNOT . cmp  (65)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	cmp  goto 108
+	addsub  goto 80
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 74
+	factor : '(' . expr ')'  (86)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	LOGNOT  shift 73
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	expr  goto 109
+	and  goto 77
+	not  goto 78
+	cmp  goto 79
+	addsub  goto 80
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 75
+	unary : '-' . selfop  (81)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 74
+	.  error
+
+	selfop  goto 110
+	factor  goto 84
+
+
+state 76
+	init : IDENT '=' expr .  (15)
+	expr : expr . LOGOR and  (61)
+
+	LOGOR  shift 111
+	';'  reduce 15
+	','  reduce 15
+
+
+state 77
+	expr : and .  (62)
+	and : and . LOGAND not  (63)
+
+	LOGAND  shift 112
+	LOGOR  reduce 62
+	';'  reduce 62
+	','  reduce 62
+	'}'  reduce 62
+	')'  reduce 62
+	']'  reduce 62
+
+
+state 78
+	and : not .  (64)
+
+	.  reduce 64
+
+
+state 79
+	not : cmp .  (66)
+	cmp : cmp . NE addsub  (67)
+	cmp : cmp . GT addsub  (68)
+	cmp : cmp . GE addsub  (69)
+	cmp : cmp . EQ addsub  (70)
+	cmp : cmp . LE addsub  (71)
+	cmp : cmp . LT addsub  (72)
+
+	LT  shift 113
+	LE  shift 114
+	GT  shift 115
+	GE  shift 116
+	EQ  shift 117
+	NE  shift 118
+	LOGAND  reduce 66
+	LOGOR  reduce 66
+	';'  reduce 66
+	','  reduce 66
+	'}'  reduce 66
+	')'  reduce 66
+	']'  reduce 66
+
+
+state 80
+	cmp : addsub .  (73)
+	addsub : addsub . '+' muldiv  (74)
+	addsub : addsub . '-' muldiv  (75)
+
+	'+'  shift 119
+	'-'  shift 120
+	LT  reduce 73
+	LE  reduce 73
+	GT  reduce 73
+	GE  reduce 73
+	EQ  reduce 73
+	NE  reduce 73
+	LOGAND  reduce 73
+	LOGOR  reduce 73
+	';'  reduce 73
+	','  reduce 73
+	'}'  reduce 73
+	')'  reduce 73
+	']'  reduce 73
+
+
+state 81
+	addsub : muldiv .  (76)
+	muldiv : muldiv . '*' unary  (77)
+	muldiv : muldiv . '/' unary  (78)
+	muldiv : muldiv . '%' unary  (79)
+
+	'*'  shift 121
+	'/'  shift 122
+	'%'  shift 123
+	LT  reduce 76
+	LE  reduce 76
+	GT  reduce 76
+	GE  reduce 76
+	EQ  reduce 76
+	NE  reduce 76
+	LOGAND  reduce 76
+	LOGOR  reduce 76
+	';'  reduce 76
+	','  reduce 76
+	'}'  reduce 76
+	')'  reduce 76
+	'+'  reduce 76
+	'-'  reduce 76
+	']'  reduce 76
+
+
+state 82
+	muldiv : unary .  (80)
+
+	.  reduce 80
+
+
+state 83
+	unary : selfop .  (82)
+
+	.  reduce 82
+
+
+state 84
+	selfop : factor . ADD2  (83)
+	selfop : factor . SUB2  (84)
+	selfop : factor .  (85)
+
+	ADD2  shift 124
+	SUB2  shift 125
+	LT  reduce 85
+	LE  reduce 85
+	GT  reduce 85
+	GE  reduce 85
+	EQ  reduce 85
+	NE  reduce 85
+	LOGAND  reduce 85
+	LOGOR  reduce 85
+	';'  reduce 85
+	','  reduce 85
+	'}'  reduce 85
+	')'  reduce 85
+	'+'  reduce 85
+	'-'  reduce 85
+	'*'  reduce 85
+	'/'  reduce 85
+	'%'  reduce 85
+	']'  reduce 85
+
+
+state 85
+	functiontype : INTEGER IDENT '(' parameters . ')'  (27)
+	parameters : parameters . ',' para  (28)
+
+	','  shift 102
+	')'  shift 126
+	.  error
+
+
+state 86
+	arrayparm : '[' NUM_INT . ']'  (103)
+
+	']'  shift 127
+	.  error
+
+
+state 87
+	arrayparm : arrayparm '[' . NUM_INT ']'  (102)
+
+	NUM_INT  shift 128
+	.  error
+
+
+state 88
+	init : init ',' IDENT . '=' expr  (12)
+	init : init ',' IDENT .  (13)
+	array : IDENT . arrayparm  (101)
+
+	'='  shift 129
+	'['  shift 44
+	';'  reduce 13
+	','  reduce 13
+
+	arrayparm  goto 45
+
+
+state 89
+	init : init ',' arrayinit .  (14)
+
+	.  reduce 14
+
+
+state 90
+	arrayinit : array '=' '{' . arrayelements '}'  (18)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	LOGNOT  shift 73
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	expr  goto 130
+	arrayelements  goto 131
+	and  goto 77
+	not  goto 78
+	cmp  goto 79
+	addsub  goto 80
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 91
+	functiontype : FLOAT IDENT '(' parameters . ')'  (26)
+	parameters : parameters . ',' para  (28)
+
+	','  shift 102
+	')'  shift 132
+	.  error
+
+
+state 92
+	functiontype : BOOL IDENT '(' parameters . ')'  (24)
+	parameters : parameters . ',' para  (28)
+
+	','  shift 102
+	')'  shift 133
+	.  error
+
+
+state 93
+	functiontype : CHARACTER IDENT '(' parameters . ')'  (25)
+	parameters : parameters . ',' para  (28)
+
+	','  shift 102
+	')'  shift 134
+	.  error
+
+
+state 94
+	constinit : IDENT '=' . CONST_CHAR  (44)
+	constinit : IDENT '=' . CONST_STR  (45)
+	constinit : IDENT '=' . NUM_INT  (46)
+	constinit : IDENT '=' . NUM_FLOAT  (47)
+	constinit : IDENT '=' . TRUE  (48)
+	constinit : IDENT '=' . FALSE  (49)
+
+	NUM_INT  shift 135
+	NUM_FLOAT  shift 136
+	CONST_STR  shift 137
+	CONST_CHAR  shift 138
+	TRUE  shift 139
+	FALSE  shift 140
+	.  error
+
+
+state 95
+	constdeclare : CONST nonvoidtypes constinit ';' .  (37)
+
+	.  reduce 37
+
+
+state 96
+	constinit : constinit ',' . IDENT '=' CONST_CHAR  (38)
+	constinit : constinit ',' . IDENT '=' CONST_STR  (39)
+	constinit : constinit ',' . IDENT '=' NUM_INT  (40)
+	constinit : constinit ',' . IDENT '=' NUM_FLOAT  (41)
+	constinit : constinit ',' . IDENT '=' TRUE  (42)
+	constinit : constinit ',' . IDENT '=' FALSE  (43)
+
+	IDENT  shift 141
+	.  error
+
+
+state 97
+	simplestatement : IDENT '=' . expr ';'  (59)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	LOGNOT  shift 73
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	expr  goto 142
+	and  goto 77
+	not  goto 78
+	cmp  goto 79
+	addsub  goto 80
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 98
+	arrayoper : '[' . expr ']'  (97)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	LOGNOT  shift 73
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	expr  goto 143
+	and  goto 77
+	not  goto 78
+	cmp  goto 79
+	addsub  goto 80
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 99
+	simplestatement : IDENT arrayoper . '=' expr ';'  (60)
+	arrayoper : arrayoper . '[' expr ']'  (96)
+
+	'='  shift 144
+	'['  shift 145
+	.  error
+
+
+state 100
+	funcdefine : '{' localdeclare statements '}' .  (50)
+
+	.  reduce 50
+
+
+state 101
+	statements : statements simplestatement .  (56)
+
+	.  reduce 56
+
+
+state 102
+	parameters : parameters ',' . para  (28)
+
+	INTEGER  shift 26
+	FLOAT  shift 27
+	BOOL  shift 28
+	CHARACTER  shift 29
+	.  error
+
+	para  goto 146
+	nonvoidtypes  goto 65
+
+
+state 103
+	functiontype : VOID IDENT '(' parameters ')' .  (23)
+
+	.  reduce 23
+
+
+state 104
+	para : nonvoidtypes IDENT .  (31)
+	array : IDENT . arrayparm  (101)
+
+	'['  shift 44
+	','  reduce 31
+	')'  reduce 31
+
+	arrayparm  goto 45
+
+
+state 105
+	para : nonvoidtypes array .  (32)
+
+	.  reduce 32
+
+
+state 106
+	factor : IDENT '(' . funcparams ')'  (95)
+	funcparams : .  (100)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	LOGNOT  shift 73
+	'('  shift 74
+	'-'  shift 75
+	','  reduce 100
+	')'  reduce 100
+
+	expr  goto 147
+	and  goto 77
+	not  goto 78
+	cmp  goto 79
+	addsub  goto 80
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+	funcparams  goto 148
+
+
+state 107
+	factor : IDENT arrayoper .  (87)
+	arrayoper : arrayoper . '[' expr ']'  (96)
+
+	'['  shift 145
+	ADD2  reduce 87
+	SUB2  reduce 87
+	LT  reduce 87
+	LE  reduce 87
+	GT  reduce 87
+	GE  reduce 87
+	EQ  reduce 87
+	NE  reduce 87
+	LOGAND  reduce 87
+	LOGOR  reduce 87
+	';'  reduce 87
+	','  reduce 87
+	'}'  reduce 87
+	')'  reduce 87
+	'+'  reduce 87
+	'-'  reduce 87
+	'*'  reduce 87
+	'/'  reduce 87
+	'%'  reduce 87
+	']'  reduce 87
+
+
+state 108
+	not : LOGNOT cmp .  (65)
+	cmp : cmp . NE addsub  (67)
+	cmp : cmp . GT addsub  (68)
+	cmp : cmp . GE addsub  (69)
+	cmp : cmp . EQ addsub  (70)
+	cmp : cmp . LE addsub  (71)
+	cmp : cmp . LT addsub  (72)
+
+	LT  shift 113
+	LE  shift 114
+	GT  shift 115
+	GE  shift 116
+	EQ  shift 117
+	NE  shift 118
+	LOGAND  reduce 65
+	LOGOR  reduce 65
+	';'  reduce 65
+	','  reduce 65
+	'}'  reduce 65
+	')'  reduce 65
+	']'  reduce 65
+
+
+state 109
+	expr : expr . LOGOR and  (61)
+	factor : '(' expr . ')'  (86)
+
+	LOGOR  shift 111
+	')'  shift 149
+	.  error
+
+
+state 110
+	unary : '-' selfop .  (81)
+
+	.  reduce 81
+
+
+state 111
+	expr : expr LOGOR . and  (61)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	LOGNOT  shift 73
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	and  goto 150
+	not  goto 78
+	cmp  goto 79
+	addsub  goto 80
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 112
+	and : and LOGAND . not  (63)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	LOGNOT  shift 73
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	not  goto 151
+	cmp  goto 79
+	addsub  goto 80
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 113
+	cmp : cmp LT . addsub  (72)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	addsub  goto 152
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 114
+	cmp : cmp LE . addsub  (71)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	addsub  goto 153
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 115
+	cmp : cmp GT . addsub  (68)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	addsub  goto 154
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 116
+	cmp : cmp GE . addsub  (69)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	addsub  goto 155
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 117
+	cmp : cmp EQ . addsub  (70)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	addsub  goto 156
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 118
+	cmp : cmp NE . addsub  (67)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	addsub  goto 157
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 119
+	addsub : addsub '+' . muldiv  (74)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	muldiv  goto 158
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 120
+	addsub : addsub '-' . muldiv  (75)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	muldiv  goto 159
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 121
+	muldiv : muldiv '*' . unary  (77)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	unary  goto 160
+	selfop  goto 83
+	factor  goto 84
+
+
+state 122
+	muldiv : muldiv '/' . unary  (78)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	unary  goto 161
+	selfop  goto 83
+	factor  goto 84
+
+
+state 123
+	muldiv : muldiv '%' . unary  (79)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	unary  goto 162
+	selfop  goto 83
+	factor  goto 84
+
+
+state 124
+	selfop : factor ADD2 .  (83)
+
+	.  reduce 83
+
+
+state 125
+	selfop : factor SUB2 .  (84)
+
+	.  reduce 84
+
+
+state 126
+	functiontype : INTEGER IDENT '(' parameters ')' .  (27)
+
+	.  reduce 27
+
+
+state 127
+	arrayparm : '[' NUM_INT ']' .  (103)
+
+	.  reduce 103
+
+
+state 128
+	arrayparm : arrayparm '[' NUM_INT . ']'  (102)
+
+	']'  shift 163
+	.  error
+
+
+state 129
+	init : init ',' IDENT '=' . expr  (12)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	LOGNOT  shift 73
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	expr  goto 164
+	and  goto 77
+	not  goto 78
+	cmp  goto 79
+	addsub  goto 80
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 130
+	arrayelements : expr .  (21)
+	expr : expr . LOGOR and  (61)
+
+	LOGOR  shift 111
+	','  reduce 21
+	'}'  reduce 21
+
+
+state 131
+	arrayinit : array '=' '{' arrayelements . '}'  (18)
+	arrayelements : arrayelements . ',' expr  (20)
+
+	','  shift 165
+	'}'  shift 166
+	.  error
+
+
+state 132
+	functiontype : FLOAT IDENT '(' parameters ')' .  (26)
+
+	.  reduce 26
+
+
+state 133
+	functiontype : BOOL IDENT '(' parameters ')' .  (24)
+
+	.  reduce 24
+
+
+state 134
+	functiontype : CHARACTER IDENT '(' parameters ')' .  (25)
+
+	.  reduce 25
+
+
+state 135
+	constinit : IDENT '=' NUM_INT .  (46)
+
+	.  reduce 46
+
+
+state 136
+	constinit : IDENT '=' NUM_FLOAT .  (47)
+
+	.  reduce 47
+
+
+state 137
+	constinit : IDENT '=' CONST_STR .  (45)
+
+	.  reduce 45
+
+
+state 138
+	constinit : IDENT '=' CONST_CHAR .  (44)
+
+	.  reduce 44
+
+
+state 139
+	constinit : IDENT '=' TRUE .  (48)
+
+	.  reduce 48
+
+
+state 140
+	constinit : IDENT '=' FALSE .  (49)
+
+	.  reduce 49
+
+
+state 141
+	constinit : constinit ',' IDENT . '=' CONST_CHAR  (38)
+	constinit : constinit ',' IDENT . '=' CONST_STR  (39)
+	constinit : constinit ',' IDENT . '=' NUM_INT  (40)
+	constinit : constinit ',' IDENT . '=' NUM_FLOAT  (41)
+	constinit : constinit ',' IDENT . '=' TRUE  (42)
+	constinit : constinit ',' IDENT . '=' FALSE  (43)
+
+	'='  shift 167
+	.  error
+
+
+state 142
+	simplestatement : IDENT '=' expr . ';'  (59)
+	expr : expr . LOGOR and  (61)
+
+	LOGOR  shift 111
+	';'  shift 168
+	.  error
+
+
+state 143
+	expr : expr . LOGOR and  (61)
+	arrayoper : '[' expr . ']'  (97)
+
+	LOGOR  shift 111
+	']'  shift 169
+	.  error
+
+
+state 144
+	simplestatement : IDENT arrayoper '=' . expr ';'  (60)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	LOGNOT  shift 73
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	expr  goto 170
+	and  goto 77
+	not  goto 78
+	cmp  goto 79
+	addsub  goto 80
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 145
+	arrayoper : arrayoper '[' . expr ']'  (96)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	LOGNOT  shift 73
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	expr  goto 171
+	and  goto 77
+	not  goto 78
+	cmp  goto 79
+	addsub  goto 80
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 146
+	parameters : parameters ',' para .  (28)
+
+	.  reduce 28
+
+
+state 147
+	expr : expr . LOGOR and  (61)
+	funcparams : expr .  (99)
+
+	LOGOR  shift 111
+	','  reduce 99
+	')'  reduce 99
+
+
+state 148
+	factor : IDENT '(' funcparams . ')'  (95)
+	funcparams : funcparams . ',' expr  (98)
+
+	','  shift 172
+	')'  shift 173
+	.  error
+
+
+state 149
+	factor : '(' expr ')' .  (86)
+
+	.  reduce 86
+
+
+state 150
+	expr : expr LOGOR and .  (61)
+	and : and . LOGAND not  (63)
+
+	LOGAND  shift 112
+	LOGOR  reduce 61
+	';'  reduce 61
+	','  reduce 61
+	'}'  reduce 61
+	')'  reduce 61
+	']'  reduce 61
+
+
+state 151
+	and : and LOGAND not .  (63)
+
+	.  reduce 63
+
+
+state 152
+	cmp : cmp LT addsub .  (72)
+	addsub : addsub . '+' muldiv  (74)
+	addsub : addsub . '-' muldiv  (75)
+
+	'+'  shift 119
+	'-'  shift 120
+	LT  reduce 72
+	LE  reduce 72
+	GT  reduce 72
+	GE  reduce 72
+	EQ  reduce 72
+	NE  reduce 72
+	LOGAND  reduce 72
+	LOGOR  reduce 72
+	';'  reduce 72
+	','  reduce 72
+	'}'  reduce 72
+	')'  reduce 72
+	']'  reduce 72
+
+
+state 153
+	cmp : cmp LE addsub .  (71)
+	addsub : addsub . '+' muldiv  (74)
+	addsub : addsub . '-' muldiv  (75)
+
+	'+'  shift 119
+	'-'  shift 120
+	LT  reduce 71
+	LE  reduce 71
+	GT  reduce 71
+	GE  reduce 71
+	EQ  reduce 71
+	NE  reduce 71
+	LOGAND  reduce 71
+	LOGOR  reduce 71
+	';'  reduce 71
+	','  reduce 71
+	'}'  reduce 71
+	')'  reduce 71
+	']'  reduce 71
+
+
+state 154
+	cmp : cmp GT addsub .  (68)
+	addsub : addsub . '+' muldiv  (74)
+	addsub : addsub . '-' muldiv  (75)
+
+	'+'  shift 119
+	'-'  shift 120
+	LT  reduce 68
+	LE  reduce 68
+	GT  reduce 68
+	GE  reduce 68
+	EQ  reduce 68
+	NE  reduce 68
+	LOGAND  reduce 68
+	LOGOR  reduce 68
+	';'  reduce 68
+	','  reduce 68
+	'}'  reduce 68
+	')'  reduce 68
+	']'  reduce 68
+
+
+state 155
+	cmp : cmp GE addsub .  (69)
+	addsub : addsub . '+' muldiv  (74)
+	addsub : addsub . '-' muldiv  (75)
+
+	'+'  shift 119
+	'-'  shift 120
+	LT  reduce 69
+	LE  reduce 69
+	GT  reduce 69
+	GE  reduce 69
+	EQ  reduce 69
+	NE  reduce 69
+	LOGAND  reduce 69
+	LOGOR  reduce 69
+	';'  reduce 69
+	','  reduce 69
+	'}'  reduce 69
+	')'  reduce 69
+	']'  reduce 69
+
+
+state 156
+	cmp : cmp EQ addsub .  (70)
+	addsub : addsub . '+' muldiv  (74)
+	addsub : addsub . '-' muldiv  (75)
+
+	'+'  shift 119
+	'-'  shift 120
+	LT  reduce 70
+	LE  reduce 70
+	GT  reduce 70
+	GE  reduce 70
+	EQ  reduce 70
+	NE  reduce 70
+	LOGAND  reduce 70
+	LOGOR  reduce 70
+	';'  reduce 70
+	','  reduce 70
+	'}'  reduce 70
+	')'  reduce 70
+	']'  reduce 70
+
+
+state 157
+	cmp : cmp NE addsub .  (67)
+	addsub : addsub . '+' muldiv  (74)
+	addsub : addsub . '-' muldiv  (75)
+
+	'+'  shift 119
+	'-'  shift 120
+	LT  reduce 67
+	LE  reduce 67
+	GT  reduce 67
+	GE  reduce 67
+	EQ  reduce 67
+	NE  reduce 67
+	LOGAND  reduce 67
+	LOGOR  reduce 67
+	';'  reduce 67
+	','  reduce 67
+	'}'  reduce 67
+	')'  reduce 67
+	']'  reduce 67
+
+
+state 158
+	addsub : addsub '+' muldiv .  (74)
+	muldiv : muldiv . '*' unary  (77)
+	muldiv : muldiv . '/' unary  (78)
+	muldiv : muldiv . '%' unary  (79)
+
+	'*'  shift 121
+	'/'  shift 122
+	'%'  shift 123
+	LT  reduce 74
+	LE  reduce 74
+	GT  reduce 74
+	GE  reduce 74
+	EQ  reduce 74
+	NE  reduce 74
+	LOGAND  reduce 74
+	LOGOR  reduce 74
+	';'  reduce 74
+	','  reduce 74
+	'}'  reduce 74
+	')'  reduce 74
+	'+'  reduce 74
+	'-'  reduce 74
+	']'  reduce 74
+
+
+state 159
+	addsub : addsub '-' muldiv .  (75)
+	muldiv : muldiv . '*' unary  (77)
+	muldiv : muldiv . '/' unary  (78)
+	muldiv : muldiv . '%' unary  (79)
+
+	'*'  shift 121
+	'/'  shift 122
+	'%'  shift 123
+	LT  reduce 75
+	LE  reduce 75
+	GT  reduce 75
+	GE  reduce 75
+	EQ  reduce 75
+	NE  reduce 75
+	LOGAND  reduce 75
+	LOGOR  reduce 75
+	';'  reduce 75
+	','  reduce 75
+	'}'  reduce 75
+	')'  reduce 75
+	'+'  reduce 75
+	'-'  reduce 75
+	']'  reduce 75
+
+
+state 160
+	muldiv : muldiv '*' unary .  (77)
+
+	.  reduce 77
+
+
+state 161
+	muldiv : muldiv '/' unary .  (78)
+
+	.  reduce 78
+
+
+state 162
+	muldiv : muldiv '%' unary .  (79)
+
+	.  reduce 79
+
+
+state 163
+	arrayparm : arrayparm '[' NUM_INT ']' .  (102)
+
+	.  reduce 102
+
+
+state 164
+	init : init ',' IDENT '=' expr .  (12)
+	expr : expr . LOGOR and  (61)
+
+	LOGOR  shift 111
+	';'  reduce 12
+	','  reduce 12
+
+
+state 165
+	arrayelements : arrayelements ',' . expr  (20)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	LOGNOT  shift 73
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	expr  goto 174
+	and  goto 77
+	not  goto 78
+	cmp  goto 79
+	addsub  goto 80
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 166
+	arrayinit : array '=' '{' arrayelements '}' .  (18)
+
+	.  reduce 18
+
+
+state 167
+	constinit : constinit ',' IDENT '=' . CONST_CHAR  (38)
+	constinit : constinit ',' IDENT '=' . CONST_STR  (39)
+	constinit : constinit ',' IDENT '=' . NUM_INT  (40)
+	constinit : constinit ',' IDENT '=' . NUM_FLOAT  (41)
+	constinit : constinit ',' IDENT '=' . TRUE  (42)
+	constinit : constinit ',' IDENT '=' . FALSE  (43)
+
+	NUM_INT  shift 175
+	NUM_FLOAT  shift 176
+	CONST_STR  shift 177
+	CONST_CHAR  shift 178
+	TRUE  shift 179
+	FALSE  shift 180
+	.  error
+
+
+state 168
+	simplestatement : IDENT '=' expr ';' .  (59)
+
+	.  reduce 59
+
+
+state 169
+	arrayoper : '[' expr ']' .  (97)
+
+	.  reduce 97
+
+
+state 170
+	simplestatement : IDENT arrayoper '=' expr . ';'  (60)
+	expr : expr . LOGOR and  (61)
+
+	LOGOR  shift 111
+	';'  shift 181
+	.  error
+
+
+state 171
+	expr : expr . LOGOR and  (61)
+	arrayoper : arrayoper '[' expr . ']'  (96)
+
+	LOGOR  shift 111
+	']'  shift 182
+	.  error
+
+
+state 172
+	funcparams : funcparams ',' . expr  (98)
+
+	NUM_INT  shift 66
+	IDENT  shift 67
+	NUM_FLOAT  shift 68
+	CONST_STR  shift 69
+	CONST_CHAR  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	LOGNOT  shift 73
+	'('  shift 74
+	'-'  shift 75
+	.  error
+
+	expr  goto 183
+	and  goto 77
+	not  goto 78
+	cmp  goto 79
+	addsub  goto 80
+	muldiv  goto 81
+	unary  goto 82
+	selfop  goto 83
+	factor  goto 84
+
+
+state 173
+	factor : IDENT '(' funcparams ')' .  (95)
+
+	.  reduce 95
+
+
+state 174
+	arrayelements : arrayelements ',' expr .  (20)
+	expr : expr . LOGOR and  (61)
+
+	LOGOR  shift 111
+	','  reduce 20
+	'}'  reduce 20
+
+
+state 175
+	constinit : constinit ',' IDENT '=' NUM_INT .  (40)
+
+	.  reduce 40
+
+
+state 176
+	constinit : constinit ',' IDENT '=' NUM_FLOAT .  (41)
+
+	.  reduce 41
+
+
+state 177
+	constinit : constinit ',' IDENT '=' CONST_STR .  (39)
+
+	.  reduce 39
+
+
+state 178
+	constinit : constinit ',' IDENT '=' CONST_CHAR .  (38)
+
+	.  reduce 38
+
+
+state 179
+	constinit : constinit ',' IDENT '=' TRUE .  (42)
+
+	.  reduce 42
+
+
+state 180
+	constinit : constinit ',' IDENT '=' FALSE .  (43)
+
+	.  reduce 43
+
+
+state 181
+	simplestatement : IDENT arrayoper '=' expr ';' .  (60)
+
+	.  reduce 60
+
+
+state 182
+	arrayoper : arrayoper '[' expr ']' .  (96)
+
+	.  reduce 96
+
+
+state 183
+	expr : expr . LOGOR and  (61)
+	funcparams : funcparams ',' expr .  (98)
+
+	LOGOR  shift 111
+	','  reduce 98
+	')'  reduce 98
+
+
+State 7 contains 5 shift/reduce conflicts.
+State 37 contains 1 shift/reduce conflict.
+
+
+42 terminals, 31 nonterminals
+104 grammar rules, 184 states

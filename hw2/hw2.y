@@ -4,12 +4,23 @@
     #ifdef DEBUG
       #define dbg(ARGS) \
       do { \
-        printf("[DEBUG] "); \
+        printf("\033[1;33m [DEBUG] "); \
         printf(ARGS); \
+        printf("\033[m"); \
       } while(0);
     #else 
       #define dbg(ARGS) 
     #endif
+    
+    #define DET_FUNC \
+        do { \
+            if (has_invoke_function) { \
+                dbg("Declaration invoke function error ...\n"); \
+                yyerror(NULL);   \
+            } \
+        } while(0);
+    
+    int has_invoke_function = 0;
 %}
 
 
@@ -25,13 +36,22 @@
 
 %%
 
-globaldeclare : globaldeclare functiondeclare
-        | globaldeclare declare
-        | globaldeclare constdeclare
-        | functiondeclare
-        | constdeclare
-        | declare
+context : context globaldeclare
+        | context funcdefine { dbg("Declare function body .. \n"); }
+        | globaldeclare
+        | funcdefine { dbg("Declare function body ... \n"); }
         ;
+
+globaldeclare : functiondeclare 
+              | constdeclare { dbg("global Constant declare ... \n"); }
+              | declare { 
+                    dbg("global function declare ...\n"); 
+                    if (has_invoke_function) {
+                        dbg("Declaration invoke function error ...\n");
+                        yyerror(NULL);  
+                    }
+                }
+              ;
 
 declare : INTEGER init ';' { dbg("Integer declaration\n"); } 
         | FLOAT init ';' { dbg("Float declaration\n"); } 
@@ -70,11 +90,7 @@ para : nonvoidtypes IDENT
      ;
 nonvoidtypes : BOOL | CHARACTER | FLOAT | INTEGER
 
-constdeclare : CONST INTEGER constinit ';'
-             | CONST FLOAT constinit ';'
-             | CONST CHARACTER constinit ';'
-             | CONST BOOL constinit ';'
-             ;
+constdeclare : CONST nonvoidtypes constinit ';'
 constinit : constinit ',' IDENT '=' CONST_CHAR
           | constinit ',' IDENT '=' CONST_STR
           | constinit ',' IDENT '=' NUM_INT
@@ -89,11 +105,30 @@ constinit : constinit ',' IDENT '=' CONST_CHAR
           | IDENT '=' FALSE
           ;
 
-expr : expr LOGOR not { dbg("Logic OR\n"); }
-     | expr LOGAND not { dbg("Logic AND\n"); }
-     | not
+funcdefine : functiontype '{' localdeclare statements '}'
+           | functiontype '{' statements '}'
+           | functiontype '{' localdeclare '}'
+           | functiontype '{' '}'
+           ;
+localdeclare : localdeclare constdeclare
+             | localdeclare declare { DET_FUNC; } 
+             | constdeclare
+             | declare { DET_FUNC; }
+             ; 
+statements : statements simplestatement { has_invoke_function = 0; }
+           | simplestatement { has_invoke_function = 0; } 
+           ;
+simplestatement : IDENT '=' expr ';' { dbg("Statement .. \n"); }
+                | IDENT arrayoper '=' expr ';' { dbg("Array Statement .. \n");}
+                ;
+
+expr : expr LOGOR and { dbg("Logic OR\n"); }
+     | and
      ;
-not : LOGNOT cmp | cmp { dbg("Logic !\n"); }
+and : and LOGAND not { dbg("Logic AND \n"); }
+    | not
+    ;
+not : LOGNOT cmp { dbg("Logic !\n"); } | cmp 
 cmp : cmp NE addsub { dbg("Compare !=\n"); }
     | cmp GT addsub { dbg("Compare >\n"); }
     | cmp GE addsub { dbg("Compare >=\n"); }
@@ -112,23 +147,34 @@ muldiv : muldiv '*' unary  { dbg("MUL\n"); }
        | unary
        ;
 unary : '-' selfop { dbg("-(unary)\n"); } | selfop 
-selfop : arrayidx ADD2 { dbg("ADDDDDDDD\n"); }
-       | arrayidx SUB2 { dbg("SUBBBBBBB\n"); }
-       | arrayidx
+selfop : factor ADD2 { dbg("ADDDDDDDD\n"); }
+       | factor SUB2 { dbg("SUBBBBBBB\n"); }
+       | factor
        ;
-arrayidx : '[' expr ']' | factor { dbg("ARRAY or Factor\n"); }
-
-
 
 factor : '(' expr ')' { dbg("Factor-(expr)\n"); }  
+       | IDENT arrayoper
        | IDENT { dbg("Factor-ID\n"); }
        | NUM_INT  { dbg("Factor-Number\n"); } 
        | NUM_FLOAT { dbg("Factor-Float\n"); } 
-       | TRUE
-       | FALSE
-       | array
+       | CONST_STR { dbg("Constant String\n"); }
+       | CONST_CHAR { dbg("Constant Character\n"); }
+       | TRUE { dbg("True factor\n"); }
+       | FALSE { dbg("False factor\n"); }
+       | IDENT '(' funcparams ')' { 
+             has_invoke_function = 1; 
+             dbg("Invoke function ...\n"); 
+         }
        ;
-array : IDENT arrayparm { dbg("Factor-array\n"); } 
+arrayoper : arrayoper '[' expr ']' { dbg("Get [][][][]\n"); }
+          | '[' expr ']' { dbg("Get []\n"); }
+          ;
+funcparams : funcparams ',' expr
+           | expr
+           |
+           ;
+
+array : IDENT arrayparm { dbg("declaration-array\n"); } 
 arrayparm : arrayparm '[' NUM_INT ']'
           | '[' NUM_INT ']'
           ;
@@ -140,9 +186,10 @@ int main() {
 }
 
 extern char *yytext, *strptr;
-extern int num_lines, num_chars;
+extern int num_lines, num_chars, old_lines;
 extern int show_source;
 extern int show_token;
+extern int first_token;
 extern char *strptr;
 
 #define END \
@@ -152,7 +199,7 @@ extern char *strptr;
     } while (*strptr != '\n' && *strptr != '\0'); \
 
 int yyerror(char *s) {
-    fprintf(stderr, "*** Error at line %d: ", num_lines);
+    fprintf(stderr, "*** Error at line %d: ", num_lines + 1);
     END;
     fprintf(stderr, "\n");
     fprintf(stderr, "Unmatched token: %s\n", yytext);

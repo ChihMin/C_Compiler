@@ -1,0 +1,5 @@
+1. make
+2. ./scanner < ${INPUT_C_CODE}
+3. Support testcase will be put under testcase folder.
+4. testcase/output/ is testcase output folder, all output will be put in it.
+
