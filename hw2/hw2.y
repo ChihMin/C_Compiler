@@ -214,6 +214,7 @@ int main() {
     yyparse();
     if (!func_count)
         yyerror(NULL);
+    printf("No symtax error!\n");
     return 0;
 }
 
