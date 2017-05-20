@@ -105,61 +105,61 @@ char *buf;
 "case"   {PL; PT(KEY); return CASE; }
 "default"   {PL; PT(KEY); return DEFAULT; }
 
-"clearerr"	{PL; PT(KEY);}
-"fclose"	{PL; PT(KEY);}
-"fdopen"	{PL; PT(KEY);}
-"feof"	{PL; PT(KEY);}
-"ferror"	{PL; PT(KEY);}
-"fflush"	{PL; PT(KEY);}
-"fgetc"	{PL; PT(KEY);}
-"fgetpos"	{PL; PT(KEY);}
-"fgets"	{PL; PT(KEY);}
-"fileno"	{PL; PT(KEY);}
-"fopen"	{PL; PT(KEY);}
-"fprintf"	{PL; PT(KEY);}
-"fpurge"	{PL; PT(KEY);}
-"fputc"	{PL; PT(KEY);}
-"fputs"	{PL; PT(KEY);}
-"fread"	{PL; PT(KEY);}
-"freopen"	{PL; PT(KEY);}
-"fscanf"	{PL; PT(KEY);}
-"fseek"	{PL; PT(KEY);}
-"fsetpos"	{PL; PT(KEY);}
-"ftell"	{PL; PT(KEY);}
-"fwrite"	{PL; PT(KEY);}
-"getc"	{PL; PT(KEY);}
-"getchar"	{PL; PT(KEY);}
-"gets"	{PL; PT(KEY);}
-"getw"	{PL; PT(KEY);}
-"mktemp"	{PL; PT(KEY);}
-"perror"	{PL; PT(KEY);}
-"printf"	{PL; PT(KEY);}
-"putc"	{PL; PT(KEY);}
-"putchar"	{PL; PT(KEY);}
-"puts"	{PL; PT(KEY);}
-"putw"	{PL; PT(KEY);}
-"remove"	{PL; PT(KEY);}
-"rewind"	{PL; PT(KEY);}
-"scanf"	{PL; PT(KEY);}
-"setbuf"	{PL; PT(KEY);}
-"setbuffer"	{PL; PT(KEY);}
-"setlinebuf"	{PL; PT(KEY);}
-"setvbuf"	{PL; PT(KEY);}
-"sprintf"	{PL; PT(KEY);}
-"sscanf"	{PL; PT(KEY);}
-"strerror"	{PL; PT(KEY);}
-"sys_errlist"	{PL; PT(KEY);}
-"sys_nerr"	{PL; PT(KEY);}
-"tempnam"	{PL; PT(KEY);}
-"tmpfile"	{PL; PT(KEY);}
-"tmpnam"	{PL; PT(KEY);}
-"ungetc"	{PL; PT(KEY);}
-"vfprintf"	{PL; PT(KEY);}
-"vfscanf"	{PL; PT(KEY);}
-"vprintf"	{PL; PT(KEY);}
-"vscanf"	{PL; PT(KEY);}
-"vsprintf"	{PL; PT(KEY);}
-"vsscanf"	{PL; PT(KEY);}
+"clearerr"	{PL; PT(KEY); return IDENT;}
+"fclose"	{PL; PT(KEY);return IDENT;}
+"fdopen"	{PL; PT(KEY);return IDENT;}
+"feof"	{PL; PT(KEY);return IDENT;}
+"ferror"	{PL; PT(KEY);return IDENT;}
+"fflush"	{PL; PT(KEY);return IDENT;}
+"fgetc"	{PL; PT(KEY);return IDENT;}
+"fgetpos"	{PL; PT(KEY);return IDENT;}
+"fgets"	{PL; PT(KEY);return IDENT;}
+"fileno"	{PL; PT(KEY);return IDENT;}
+"fopen"	{PL; PT(KEY);return IDENT;}
+"fprintf"	{PL; PT(KEY);return IDENT;}
+"fpurge"	{PL; PT(KEY);return IDENT;}
+"fputc"	{PL; PT(KEY);return IDENT;}
+"fputs"	{PL; PT(KEY);return IDENT;}
+"fread"	{PL; PT(KEY);return IDENT;}
+"freopen"	{PL; PT(KEY);return IDENT;}
+"fscanf"	{PL; PT(KEY);return IDENT;}
+"fseek"	{PL; PT(KEY);return IDENT;}
+"fsetpos"	{PL; PT(KEY);return IDENT;}
+"ftell"	{PL; PT(KEY);return IDENT;}
+"fwrite"	{PL; PT(KEY);return IDENT;}
+"getc"	{PL; PT(KEY);return IDENT;}
+"getchar"	{PL; PT(KEY);return IDENT;}
+"gets"	{PL; PT(KEY);return IDENT;}
+"getw"	{PL; PT(KEY);return IDENT;}
+"mktemp"	{PL; PT(KEY);return IDENT;}
+"perror"	{PL; PT(KEY);return IDENT;}
+"printf"	{PL; PT(KEY);return IDENT;}
+"putc"	{PL; PT(KEY);return IDENT;}
+"putchar"	{PL; PT(KEY);return IDENT;}
+"puts"	{PL; PT(KEY);return IDENT;}
+"putw"	{PL; PT(KEY);return IDENT;}
+"remove"	{PL; PT(KEY);return IDENT;}
+"rewind"	{PL; PT(KEY);return IDENT;}
+"scanf"	{PL; PT(KEY);return IDENT;}
+"setbuf"	{PL; PT(KEY);return IDENT;}
+"setbuffer"	{PL; PT(KEY);return IDENT;}
+"setlinebuf"	{PL; PT(KEY);return IDENT;}
+"setvbuf"	{PL; PT(KEY);return IDENT;}
+"sprintf"	{PL; PT(KEY);return IDENT;}
+"sscanf"	{PL; PT(KEY);return IDENT;}
+"strerror"	{PL; PT(KEY);return IDENT;}
+"sys_errlist"	{PL; PT(KEY);return IDENT;}
+"sys_nerr"	{PL; PT(KEY);return IDENT;}
+"tempnam"	{PL; PT(KEY);return IDENT;}
+"tmpfile"	{PL; PT(KEY);return IDENT;}
+"tmpnam"	{PL; PT(KEY);return IDENT;}
+"ungetc"	{PL; PT(KEY);return IDENT;}
+"vfprintf"	{PL; PT(KEY);return IDENT;}
+"vfscanf"	{PL; PT(KEY);return IDENT;}
+"vprintf"	{PL; PT(KEY);return IDENT;}
+"vscanf"	{PL; PT(KEY);return IDENT;}
+"vsprintf"	{PL; PT(KEY);return IDENT;}
+"vsscanf"	{PL; PT(KEY);return IDENT;}
 
 
 "+" { PL; PT(OP); return '+'; }
