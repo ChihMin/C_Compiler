@@ -25,8 +25,10 @@
 
 %%
 
-context : context declare
-        | context constdeclare
+globaldeclare : globaldeclare functiondeclare
+        | globaldeclare declare
+        | globaldeclare constdeclare
+        | functiondeclare
         | constdeclare
         | declare
         ;
@@ -52,12 +54,27 @@ arrayelements : arrayelements ',' expr
               | expr
               ;
 
+functiondeclare : functiontype ';'
+functiontype : VOID IDENT '(' parameters ')' { dbg("declare void function\n"); }
+             | BOOL IDENT '(' parameters ')' { dbg("declare bool function\n"); }
+             | CHARACTER IDENT '(' parameters ')' { dbg("declare char function\n"); }
+             | FLOAT IDENT '(' parameters ')' { dbg("declare double funciton\n"); }
+             | INTEGER IDENT '(' parameters ')' { dbg("declare interger function\n"); } 
+             ;
+parameters : parameters ',' para
+           | para
+           | 
+           ;
+para : nonvoidtypes IDENT
+     | nonvoidtypes array
+     ;
+nonvoidtypes : BOOL | CHARACTER | FLOAT | INTEGER
+
 constdeclare : CONST INTEGER constinit ';'
              | CONST FLOAT constinit ';'
              | CONST CHARACTER constinit ';'
              | CONST BOOL constinit ';'
              ;
-
 constinit : constinit ',' IDENT '=' CONST_CHAR
           | constinit ',' IDENT '=' CONST_STR
           | constinit ',' IDENT '=' NUM_INT
@@ -101,6 +118,8 @@ selfop : arrayidx ADD2 { dbg("ADDDDDDDD\n"); }
        ;
 arrayidx : '[' expr ']' | factor { dbg("ARRAY or Factor\n"); }
 
+
+
 factor : '(' expr ')' { dbg("Factor-(expr)\n"); }  
        | IDENT { dbg("Factor-ID\n"); }
        | NUM_INT  { dbg("Factor-Number\n"); } 
@@ -109,7 +128,6 @@ factor : '(' expr ')' { dbg("Factor-(expr)\n"); }
        | FALSE
        | array
        ;
-
 array : IDENT arrayparm { dbg("Factor-array\n"); } 
 arrayparm : arrayparm '[' NUM_INT ']'
           | '[' NUM_INT ']'
