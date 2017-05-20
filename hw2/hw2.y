@@ -21,6 +21,7 @@
         } while(0);
     
     int has_invoke_function = 0;
+    int func_count = 0;
 %}
 
 
@@ -38,9 +39,9 @@
 %%
 
 context : context globaldeclare
-        | context funcdefine { dbg("Declare function body .. \n"); }
+        | context funcdefine { dbg("Declare function body .. \n"); func_count++;}
         | globaldeclare
-        | funcdefine { dbg("Declare function body ... \n"); }
+        | funcdefine { dbg("Declare function body ... \n"); func_count++; }
         ;
 
 globaldeclare : functiondeclare 
@@ -211,6 +212,8 @@ arrayparm : arrayparm '[' NUM_INT ']'
 
 int main() {
     yyparse();
+    if (!func_count)
+        yyerror(NULL);
     return 0;
 }
 
