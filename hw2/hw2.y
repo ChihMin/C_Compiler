@@ -74,6 +74,7 @@ arrayinit : array '=' '{' arrayelements '}'
           ;
 arrayelements : arrayelements ',' expr
               | expr
+              |
               ;
 
 functiondeclare : functiontype ';'
@@ -236,7 +237,7 @@ extern char *strptr;
 
 int yyerror(char *s) {
     fprintf(stderr, "*** Error at line %d: ", num_lines + 1);
-    END; printf("\n");
+    END; fprintf(stderr, "\n");
     fprintf(stderr, "\n");
     fprintf(stderr, "Unmatched token: %s\n", yytext);
     fprintf(stderr, "*** syntax error\n");
