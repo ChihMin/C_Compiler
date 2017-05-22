@@ -9,6 +9,7 @@ enum {
   OP_SUB,
   OP_MUL,
   OP_DIV,
+  OP_MOD,
   OP_STR,
   OP_LDR
 };
@@ -24,6 +25,10 @@ struct Symbol {
     double dval;
     char c;
     int symbol_id;
+    int in_reg;
+    int reg;
+    int in_sp;
+    int sp_offset;
 };
 
 
@@ -36,7 +41,10 @@ struct Instruction {
 
 typedef struct Instruction Instruction;
 
+#define get_temp_reg() get_reg(NULL)
+
 #define MAX_TABLE_SIZE 5000
+#define REG_MAX 15
 enum {
   TYPE_BOOL = 1,
   TYPE_INT,
@@ -58,6 +66,14 @@ struct SymbolEntry {
 }  table[MAX_TABLE_SIZE];
 typedef struct SymbolEntry SymbolEntry;
 
+struct Register {
+  int in_use;
+  int time;
+  int is_temp;
+  Symbol* target;
+};
+typedef struct Register Register;
+
 void push_symbol(char *name, int scope, int type) ;
 int lookup_symbol(char *name, int scope) ;
 
@@ -68,7 +84,9 @@ void gen_ir_add(Symbol *, Symbol *, Symbol *);
 void gen_ir_sub(Symbol *, Symbol *, Symbol *);
 void gen_ir_mul(Symbol *, Symbol *, Symbol *);
 void gen_ir_div(Symbol *, Symbol *, Symbol *);
+void gen_ir_mod(Symbol *, Symbol *, Symbol *);
 void gen_ir_str(Symbol *, int);
 void gen_ir_ldr(Symbol *, int);
 
+void gen_mc_inst();
 #endif 

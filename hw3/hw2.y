@@ -35,6 +35,12 @@
 
     struct Symbol * alloc_symbol();
     struct Instruction IR[5000];
+    
+    char *code_buf[5000];
+    char **code_base = code_buf;
+    char **code_ptr = code_buf;
+    int mc_num = 0;
+
     int ir_num = 0;
 
     int has_invoke_function = 0;
@@ -43,6 +49,8 @@
     int symbol_num = 0;
     int cur_scope = 0;
     int cur_offset = 0;
+
+    FILE *f_asm = NULL; 
 %}
 
 
@@ -84,8 +92,6 @@ globaldeclare : functiondeclare
 
 declare : INTEGER init ';' { 
             dbg("Integer declaration\n");
-            push_symbol($2->name, cur_scope, TYPE_INT);
-            gen_ir_str($2, cur_offset - 4);
           } 
         | FLOAT init ';' { dbg("Float declaration\n"); } 
         | BOOL init ';' { dbg("Bool declaration\n"); }
@@ -95,14 +101,26 @@ declare : INTEGER init ';' {
 init : init ',' IDENT '=' expr {
            $5->name = $3;
            $$ = $5;
+           push_symbol($$->name, cur_scope, TYPE_INT);
+           gen_ir_str($$, cur_offset - 4);
        }
-     | init ',' IDENT { $$ = alloc_symbol(); $$->name = $3; }
+     | init ',' IDENT { 
+         $$ = alloc_symbol(); $$->name = $3; 
+         push_symbol($$->name, cur_scope, TYPE_INT);
+         gen_ir_str($$, cur_offset - 4);
+       }
      | init ',' arrayinit
      | IDENT '=' expr {
            $3->name = $1;
            $$ = $3;
+           push_symbol($$->name, cur_scope, TYPE_INT);
+           gen_ir_str($$, cur_offset - 4);
        }
-     | IDENT { $$ = alloc_symbol(); $$->name = $1; }
+     | IDENT { 
+         $$ = alloc_symbol(); $$->name = $1; 
+         push_symbol($$->name, cur_scope, TYPE_INT);
+         gen_ir_str($$, cur_offset - 4);
+       }
      | arrayinit
      ;
 
@@ -144,7 +162,12 @@ constinit : constinit ',' IDENT '=' CONST_CHAR
           | IDENT '=' TRUE
           | IDENT '=' FALSE
           ;
-funcdefine : functiontype scope
+funcdefine : functiontype scope {
+                int i;
+                for (i = 0; i < 5000; ++i)
+                    code_buf[i] = (char *)malloc(100);
+                gen_mc_inst();
+             }
 scope :  '{' localdeclare statements '}'
       |  '{' statements '}'
       |  '{' localdeclare '}'
@@ -243,6 +266,7 @@ muldiv : muldiv '*' unary  {
        | muldiv '%' unary  { 
            dbg("MOD\n"); 
            $$ = alloc_symbol();
+           gen_ir_mod($$, $1, $3);
            print("[%d] = [%d] * [%d]\n", $$->id, $1->id,  $3->id);
          }
        | unary
@@ -300,7 +324,8 @@ arrayparm : arrayparm '[' NUM_INT ']'
 %%
 
 int main() {
-    
+    f_asm = fopen("assembly", "w");
+
     yyparse();
     if (!func_count)
         yyerror(NULL);
