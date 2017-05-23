@@ -52,6 +52,13 @@ int lookup_symbol(char *name, int scope) {
     return -1;
 }
 
+void set_symbol_type(int number, int type) {
+    int i;
+    for (i = 1; i <= number; ++i) {
+        int idx = symbol_num - i;
+        table[i].type = type;
+    }
+}
 
 void gen_ir_mov(Symbol *op1, Symbol *op2) {
     IR[ir_num].opc = OP_MOV;

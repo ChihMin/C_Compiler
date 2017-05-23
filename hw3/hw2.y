@@ -49,6 +49,7 @@
     int symbol_num = 0;
     int cur_scope = 0;
     int cur_offset = 0;
+    int declare_num = 0;
 
     FILE *f_asm = NULL; 
 %}
@@ -91,7 +92,9 @@ globaldeclare : functiondeclare
               ;
 
 declare : INTEGER init ';' { 
-            dbg("Integer declaration\n");
+            print("Integer declaration : %d\n", declare_num);
+            set_symbol_type(declare_num, TYPE_INT);
+            declare_num = 0;
           } 
         | FLOAT init ';' { dbg("Float declaration\n"); } 
         | BOOL init ';' { dbg("Bool declaration\n"); }
@@ -101,27 +104,31 @@ declare : INTEGER init ';' {
 init : init ',' IDENT '=' expr {
            $5->name = $3;
            $$ = $5;
-           push_symbol($$->name, cur_scope, TYPE_INT);
+           push_symbol($$->name, cur_scope,0);
            gen_ir_str($$, cur_offset - 4);
+           declare_num++;
        }
      | init ',' IDENT { 
          $$ = alloc_symbol(); $$->name = $3; 
-         push_symbol($$->name, cur_scope, TYPE_INT);
+         push_symbol($$->name, cur_scope, 0);
          gen_ir_str($$, cur_offset - 4);
+         declare_num++;
        }
      | init ',' arrayinit
      | IDENT '=' expr {
            $3->name = $1;
            $$ = $3;
-           push_symbol($$->name, cur_scope, TYPE_INT);
+           push_symbol($$->name, cur_scope, 0);
            gen_ir_str($$, cur_offset - 4);
+           declare_num++;
        }
      | IDENT { 
          $$ = alloc_symbol(); $$->name = $1; 
-         push_symbol($$->name, cur_scope, TYPE_INT);
+         push_symbol($$->name, cur_scope, 0);
          gen_ir_str($$, cur_offset - 4);
+         declare_num++;
        }
-     | arrayinit
+     | arrayinit { $$= NULL; }
      ;
 
 arrayinit : array '=' '{' arrayelements '}'
@@ -206,9 +213,9 @@ simplestatement : IDENT '=' expr ';' {
 ifelsestatement : IF '(' expr ')' scope { dbg("Only if statement\n"); }
                 | IF '(' expr ')' scope ELSE scope { dbg("IF-ELSE Statement\n"); }
                 ;
-whilestatement : WHILE '(' expr ')' scope { dbg("While statement ... \n"); }
+whilestatement : WHILE {  } '(' expr ')' scope { dbg("While statement ... \n"); }
                | DO scope WHILE '(' expr ')' ';' { dbg("Do-While statement \n"); } 
-forstatement : FOR '(' forparam ';' forparam ';' forparam ')' scope { dbg("For statement \n"); }
+forstatement : FOR '(' forparam ';' {print("Set Label ... %c",'\n' );} forparam ';' forparam ')' scope { dbg("For statement \n"); }
 forparam : | expr
 
 switchstatement : SWITCH '(' IDENT ')' '{' casecontent default '}' { dbg("Switch Statement \n"); }

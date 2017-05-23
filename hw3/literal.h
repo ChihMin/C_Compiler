@@ -29,6 +29,7 @@ struct Symbol {
     int reg;
     int in_sp;
     int sp_offset;
+    int type;
 };
 
 
@@ -76,6 +77,7 @@ typedef struct Register Register;
 
 void push_symbol(char *name, int scope, int type) ;
 int lookup_symbol(char *name, int scope) ;
+void set_symbol_type(int number, int type) ;
 
 void printIR();
 void gen_ir_mov(Symbol *, Symbol *);
