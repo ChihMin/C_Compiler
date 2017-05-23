@@ -50,6 +50,10 @@
     int cur_scope = 0;
     int cur_offset = 0;
     int declare_num = 0;
+        
+    int cur_label = 3;
+    int label_top = 0;
+    int label_stack[5000];
 
     FILE *f_asm = NULL; 
 %}
@@ -71,7 +75,7 @@
 %token ADD2 SUB2 LT LE GT GE EQ NE LOGAND LOGOR LOGNOT BITAND
 %token <ival> NUM_INT
 %token <str> IDENT 
-%type <symbol> factor selfop unary muldiv addsub expr declare init
+%type <symbol> factor selfop unary muldiv addsub cmp not and expr declare init
 %%
 
 context : context globaldeclare
@@ -175,7 +179,8 @@ funcdefine : functiontype scope {
                     code_buf[i] = (char *)malloc(100);
                 gen_mc_inst();
              }
-scope :  '{' localdeclare statements '}'
+scope : { cur_scope++; } scopetype { int pop_num = pop_symbol(cur_scope--); }
+scopetype :  '{' localdeclare statements '}'
       |  '{' statements '}'
       |  '{' localdeclare '}'
       |  '{' '}'
@@ -207,12 +212,27 @@ simplestatement : IDENT '=' expr ';' {
                     }
                     $3->name = $1;
                     gen_ir_str($3, offset);
-                 }
+                  }
                 | IDENT arrayoper '=' expr ';' { dbg("Array Statement .. \n");}
                 ;
-ifelsestatement : IF '(' expr ')' scope { dbg("Only if statement\n"); }
-                | IF '(' expr ')' scope ELSE scope { dbg("IF-ELSE Statement\n"); }
+ifelsestatement : IF '(' expr ')' { /* Set jump to else */  
+                    print("[label] if(expr) scope = %d jump to .L%d\n", cur_scope, cur_label);
+                    label_stack[++label_top] = cur_label; // Push Label
+                    gen_ir_brcond(cur_label);
+                    cur_label++;
+                  } scope { /* Gen jump */ 
+                    print("if stmt scope = %d\n", cur_scope);
+                    gen_ir_label(label_stack[label_top]);
+                    print("[label] .L%d\n", label_stack[label_top]);
+                    label_top--; // pop label 
+                  } elsestmt {
+                    dbg("If-else Statement ... \n"); 
+                    print("else stmp scope = %d\n", cur_scope);
+                  }
                 ;
+elsestmt : ELSE scope
+         |
+         ;
 whilestatement : WHILE {  } '(' expr ')' scope { dbg("While statement ... \n"); }
                | DO scope WHILE '(' expr ')' ';' { dbg("Do-While statement \n"); } 
 forstatement : FOR '(' forparam ';' {print("Set Label ... %c",'\n' );} forparam ';' forparam ')' scope { dbg("For statement \n"); }
@@ -236,12 +256,42 @@ and : and LOGAND not { dbg("Logic AND \n"); }
     | not
     ;
 not : LOGNOT cmp { dbg("Logic !\n"); } | cmp 
-cmp : cmp NE addsub { dbg("Compare !=\n"); }
-    | cmp GT addsub { dbg("Compare >\n"); }
-    | cmp GE addsub { dbg("Compare >=\n"); }
-    | cmp EQ addsub { dbg("Compare ==\n"); }
-    | cmp LE addsub { dbg("Compare <=\n"); }
-    | cmp LT addsub { dbg("Compare <\b"); }
+cmp : cmp NE addsub { 
+        dbg("Compare !=\n"); 
+        $$ = alloc_symbol();
+        gen_ir_cmp($$, $1, $3, CMP_NE);
+        print("[%d] = [%d] != [%d]\n", $$->id, $1->id, $3->id);
+      }
+    | cmp GT addsub { 
+        dbg("Compare >\n"); 
+        $$ = alloc_symbol();
+        gen_ir_cmp($$, $1, $3, CMP_GT);
+        print("[%d] = [%d] > [%d]\n", $$->id, $1->id, $3->id);
+      }
+    | cmp GE addsub { 
+        dbg("Compare >=\n"); 
+        $$ = alloc_symbol();
+        gen_ir_cmp($$, $1, $3, CMP_GE);
+        print("[%d] = [%d] >= [%d]\n", $$->id, $1->id, $3->id);
+      }
+    | cmp EQ addsub { 
+        dbg("Compare ==\n"); 
+        $$ = alloc_symbol();
+        gen_ir_cmp($$, $1, $3, CMP_EQ);
+        print("[%d] = [%d] == [%d]\n", $$->id, $1->id, $3->id);
+      }
+    | cmp LE addsub { 
+        dbg("Compare <=\n"); 
+        $$ = alloc_symbol();
+        gen_ir_cmp($$, $1, $3, CMP_LE);
+        print("[%d] = [%d] <= [%d]\n", $$->id, $1->id, $3->id);
+      }
+    | cmp LT addsub { 
+        dbg("Compare < \n"); 
+        $$ = alloc_symbol();
+        gen_ir_cmp($$, $1, $3, CMP_LT);
+        print("[%d] = [%d] < [%d]\n", $$->id, $1->id, $3->id);
+      }
     | addsub
     ;
 addsub : addsub '+' muldiv { 
@@ -278,14 +328,25 @@ muldiv : muldiv '*' unary  {
          }
        | unary
        ;
-unary : '-' selfop { dbg("-(unary)\n"); } | selfop 
+unary : '-' selfop { 
+            dbg("-(unary)\n");
+            Symbol *op0 = alloc_symbol();
+            Symbol *op1 = alloc_symbol();
+            op1->ival = 0;
+            op1->is_int = 1;
+            gen_ir_movi(op1, 0);
+            Symbol *op2 = $2;
+            gen_ir_sub(op0, op1, op2);
+            $$ = op0;
+        } 
+      | selfop 
 selfop : factor ADD2 { dbg("ADDDDDDDD\n"); }
        | factor SUB2 { dbg("SUBBBBBBB\n"); }
        | factor
        ;
 
 factor : '(' expr ')' { $$ = $2; dbg("Factor-(expr)\n"); }  
-       | IDENT arrayoper
+       | IDENT arrayoper { $$ = NULL; }
        | IDENT {
             int offset = lookup_symbol($1, cur_scope);  
             if (offset < 0) {

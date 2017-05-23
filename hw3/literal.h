@@ -11,7 +11,19 @@ enum {
   OP_DIV,
   OP_MOD,
   OP_STR,
-  OP_LDR
+  OP_LDR,
+  OP_BRCOND,
+  OP_CMP,
+  OP_LABEL
+};
+
+enum {
+  CMP_EQ = 1,
+  CMP_NE,
+  CMP_GE,
+  CMP_GT,
+  CMP_LE,
+  CMP_LT
 };
 
 struct Symbol {
@@ -37,6 +49,8 @@ typedef struct Symbol Symbol;
 
 struct Instruction {
   int opc, operand_num;
+  int label;
+  int cmp_type;
   Symbol* operands[5]; 
 };
 
@@ -76,6 +90,7 @@ struct Register {
 typedef struct Register Register;
 
 void push_symbol(char *name, int scope, int type) ;
+int pop_symbol(int scope);
 int lookup_symbol(char *name, int scope) ;
 void set_symbol_type(int number, int type) ;
 
@@ -87,8 +102,11 @@ void gen_ir_sub(Symbol *, Symbol *, Symbol *);
 void gen_ir_mul(Symbol *, Symbol *, Symbol *);
 void gen_ir_div(Symbol *, Symbol *, Symbol *);
 void gen_ir_mod(Symbol *, Symbol *, Symbol *);
+void gen_ir_cmp(Symbol *, Symbol *, Symbol *, int);
 void gen_ir_str(Symbol *, int);
 void gen_ir_ldr(Symbol *, int);
+void gen_ir_brcond(int);
+void gen_ir_label(int);
 
 void gen_mc_inst();
 #endif 

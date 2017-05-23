@@ -33,6 +33,7 @@ void push_symbol(char *name, int scope, int type) {
         }
     }
     
+    table[symbol_num].scope = scope;
     table[symbol_num].id = symbol_num; 
     table[symbol_num].name = name;
     table[symbol_num].offset = cur_offset;
@@ -50,6 +51,18 @@ int lookup_symbol(char *name, int scope) {
         }
     }
     return -1;
+}
+
+int pop_symbol(int scope) {
+    int i;
+    int pop_num = 0;
+    for (i = symbol_num - 1; i >= 0; i--) {
+        if (table[i].scope != scope)
+            break;
+        pop_num++;
+    }
+    symbol_num -= pop_num;
+    return pop_num;
 }
 
 void set_symbol_type(int number, int type) {
@@ -142,6 +155,32 @@ void gen_ir_ldr(Symbol *op, int offset) {
     ir_num++;
 }
 
+void gen_ir_brcond(int label) {
+    IR[ir_num].opc = OP_BRCOND;
+    IR[ir_num].label = label;
+    IR[ir_num].operands[0] = IR[ir_num-1].operands[0];
+    IR[ir_num].operand_num = 1;
+    ir_num++;
+}
+
+void gen_ir_label(int label) {
+    IR[ir_num].opc = OP_LABEL;
+    IR[ir_num].label = label;
+    IR[ir_num].operand_num = 0;
+    ir_num++;
+}
+
+void gen_ir_cmp(Symbol *op0, Symbol *op1, Symbol *op2, int type) {
+    #define ins IR[ir_num]
+    ins.opc = OP_CMP;
+    ins.cmp_type = type;
+    ins.operands[0] = op0;
+    ins.operands[1] = op1;
+    ins.operands[2] = op2;
+    ir_num++;
+    #undef ins
+}
+
 /*********** BACKEND ************/
 
 void free_reg(int idx) {
@@ -226,9 +265,13 @@ void gen_mc_movi(Symbol *symbol, int val) {
     int h = ((val & 0xFFF00000) >> 20) & 0xFFF;
     int l = val & 0xFFFFF;
     
-    if (h)
-        sprintf(*(code_ptr++), "sethi\t$r%d, %d", r, h); 
-    sprintf(*(code_ptr++), "movi\t$r%d, %d", r, l); 
+    if (h) {
+        sprintf(*(code_ptr++), "movi\t$r%d, %d", r, h);
+        sprintf(*(code_ptr++), "slli\t$r%d, $r%d, 20", r,r);
+        sprintf(*(code_ptr++), "ori\t$r%d, $r%d, %d", r, r, l);
+    } else { 
+        sprintf(*(code_ptr++), "movi\t$r%d, %d", r, l); 
+    }
 }
 
 void gen_mc_add(Symbol *op0, Symbol *op1, Symbol *op2) {
@@ -270,7 +313,6 @@ void gen_mc_divsr(Symbol *op0, Symbol *op1, Symbol *op2, int OP) {
         sprintf(*(code_ptr++), 
             "divsr\t$r%d, r%d, $r%d, $r%d", r0, r3, r1, r2);
     }
-    printf("free %d %d %d\n", r1,r2,r3);
     free_reg(r1);
     free_reg(r2);
     free_reg(r3);
@@ -285,6 +327,116 @@ void gen_mc_swi(Symbol *op, int offset, int type) {
 void gen_mc_lwi(Symbol *op, int offset, int type) {
     int r = load_back_reg(op);
     sprintf(*(code_ptr++), "lwi\t$r%d, [$sp + %d]", r, offset);
+}
+
+void gen_mc_brcond(Symbol *op, int label) {
+    int r = load_back_reg(op);
+    sprintf(*(code_ptr++), "beqz\t$r%d, _L%d", r, label);
+}
+
+void gen_mc_eq(Symbol *op0, Symbol *op1, Symbol *op2) {
+    #define emit *(code_ptr++)
+    int r0 = load_back_reg(op0);
+    int r1 = load_back_reg(op1);
+    int r2 = load_back_reg(op2);
+    int r3 = get_temp_reg();
+    
+    sprintf(emit, "xor\t$r%d, $r%d, $r%d", r3, r1, r2);
+    sprintf(emit, "slti\t$r%d, $r%d, 1", r0, r3);
+    
+    free_reg(r1);
+    free_reg(r2);
+    free_reg(r3);
+    #undef emit
+}
+
+void gen_mc_ne(Symbol *op0, Symbol *op1, Symbol *op2) {
+    #define emit *(code_ptr++)
+    int r0 = load_back_reg(op0);
+    int r1 = load_back_reg(op1);
+    int r2 = load_back_reg(op2);
+    int r3 = get_temp_reg();
+    int r4 = get_temp_reg();
+    
+    sprintf(emit, "xor\t$r%d, $r%d, $r%d", r3, r1, r2);
+    sprintf(emit, "slti\t$r%d, $r%d, 1", r4, r3);
+    sprintf(emit, "xori\t$r%d, $r%d, 1", r0, r4);
+    
+    free_reg(r1);
+    free_reg(r2);
+    free_reg(r3);
+    free_reg(r4);
+    #undef emit
+}
+
+void gen_mc_ge(Symbol *op0, Symbol *op1, Symbol *op2) {
+    #define emit *(code_ptr++)
+    int r0 = load_back_reg(op0);
+    int r1 = load_back_reg(op1);
+    int r2 = load_back_reg(op2);
+    int r3 = get_temp_reg();
+ 
+    sprintf(emit, "stls\t$r%d, $r%d, $r%d", r3, r1, r2);
+    sprintf(emit, "xori\t$r%d, $r%d, 1", r0, r3);
+    
+    free_reg(r1);
+    free_reg(r2);
+    free_reg(r3);
+    #undef emit
+}
+
+void gen_mc_gt(Symbol *op0, Symbol *op1, Symbol *op2) {
+    #define emit *(code_ptr++)
+    int r0 = load_back_reg(op0);
+    int r1 = load_back_reg(op1);
+    int r2 = load_back_reg(op2);
+    int r3 = get_temp_reg();
+    int r4 = get_temp_reg();
+
+    sprintf(emit, "stls\t$r%d, $r%d, $r%d", r3, r1, r2);
+    sprintf(emit, "xor\t$r%d, $r%d, $r%d", r4, r1, r2);
+    sprintf(emit, "slti\t$r%d, $r%d, 1", r4, r4);
+    sprintf(emit, "or\t$r%d, $r%d, $r%d", r0, r3, r4);
+    sprintf(emit, "xori\t$r%d, $r%d, 1", r0, r0);
+    
+    free_reg(r1);
+    free_reg(r2);
+    free_reg(r3);
+    free_reg(r4);
+    #undef emit
+}
+
+void gen_mc_le(Symbol *op0, Symbol *op1, Symbol *op2) {
+    #define emit *(code_ptr++)
+    int r0 = load_back_reg(op0);
+    int r1 = load_back_reg(op1);
+    int r2 = load_back_reg(op2);
+    int r3 = get_temp_reg();
+    int r4 = get_temp_reg();
+ 
+    sprintf(emit, "stls\t$r%d, $r%d, $r%d", r3, r1, r2);
+    sprintf(emit, "xor\t$r%d, $r%d, $r%d", r4, r1, r2);
+    sprintf(emit, "slti\t$r%d, $r%d, 1", r4, r4);
+    sprintf(emit, "or\t$r%d, $r%d, $r%d", r0, r3, r4);
+    
+    free_reg(r1);
+    free_reg(r2);
+    free_reg(r3);
+    free_reg(r4);
+    #undef emit
+}
+
+void gen_mc_lt(Symbol *op0, Symbol *op1, Symbol *op2) {
+    #define emit *(code_ptr++)
+    int r0 = load_back_reg(op0);
+    int r1 = load_back_reg(op1);
+    int r2 = load_back_reg(op2);
+ 
+    sprintf(emit, "stls\t$r%d, $r%d, $r%d", r0, r1, r2);
+    
+    free_reg(r1);
+    free_reg(r2);
+    #undef emit
 }
 
 void gen_mc_inst() {
@@ -325,13 +477,49 @@ void gen_mc_inst() {
             break;
         
         case OP_STR:
-            // printf("store [%d] to offset %d(%s)\n", op0->id, op0->offset, op0->name);
             gen_mc_swi(op0, op0->offset, 0);
             break;
         case OP_LDR:
-            // printf("Load offset %d(%s) to [%d]\n", op0->offset, op0->name, op0->id);
             gen_mc_lwi(op0, op0->offset, 0);
             break;
+        
+        case OP_BRCOND:
+            gen_mc_brcond(op0, IR[i].label);
+            break;
+         
+        case OP_LABEL:
+            sprintf(*(code_ptr++), "_L%d:", IR[i].label);
+            break;
+
+        case OP_CMP:
+            // printf("CMP [%d] = [%d] ", op0->id, op1->id);
+            switch (IR[i].cmp_type) {
+            case CMP_EQ:
+                gen_mc_eq(op0, op1, op2);
+                break;
+
+            case CMP_NE:
+                gen_mc_ne(op0, op1, op2);
+                break;
+
+            case CMP_GE:
+                gen_mc_ge(op0, op1, op2);
+                break;
+            
+            case CMP_GT:
+                gen_mc_gt(op0, op1, op2);
+                break;
+
+            case CMP_LE:
+                gen_mc_le(op0, op1, op2);
+                break;
+
+            case CMP_LT:
+                gen_mc_lt(op0, op1, op2);
+                break;
+            }
+            break;
+
         default:
             printf("Unsupport IR OPCode ... \n");
             exit(-1);
@@ -342,7 +530,11 @@ void gen_mc_inst() {
     printf("\taddi\t$sp, $sp - %d\n", cur_offset);
     char **ptr;
     for (ptr = code_base; ptr != code_ptr; ++ptr) {
-        printf("\t%s\n", *ptr);
+        if (**ptr != '_')
+            printf("\t");
+        else
+            printf("\n");
+        printf("%s\n", *ptr);
     }
     printf("\taddi\t$sp, $sp + %d\n", cur_offset);
     printf("\tpop.s\t{ $lp }\n");
@@ -387,6 +579,41 @@ void printIR() {
             break;
         case OP_LDR:
             printf("Load offset %d(%s) to [%d]\n", op0->offset, op0->name, op0->id);
+            break;
+        case OP_BRCOND:
+            printf("Brcond [%d] == 0, Jump to .L%d\n", op0->id, IR[i].label); 
+            break;
+        case OP_LABEL:
+            printf("\n.L%d:\n", IR[i].label);
+            break;
+        case OP_CMP:
+            printf("CMP [%d] = [%d] ", op0->id, op1->id);
+            switch (IR[i].cmp_type) {
+            case CMP_EQ:
+                printf("==");
+                break;
+
+            case CMP_NE:
+                printf("!=");
+                break;
+
+            case CMP_GE:
+                printf(">=");
+                break;
+            
+            case CMP_GT:
+                printf(">");
+                break;
+
+            case CMP_LE:
+                printf("<=");
+                break;
+
+            case CMP_LT:
+                printf("<");
+                break;
+            }
+            printf(" [%d]\n", op2->id);
             break;
         default:
             printf("Unsupport IR OPCode ... \n");
