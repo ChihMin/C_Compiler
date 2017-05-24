@@ -14,7 +14,8 @@ enum {
   OP_LDR,
   OP_BRCOND,
   OP_CMP,
-  OP_LABEL
+  OP_LABEL,
+  OP_CALL
 };
 
 enum {
@@ -51,7 +52,8 @@ struct Instruction {
   int opc, operand_num;
   int label;
   int cmp_type;
-  Symbol* operands[5]; 
+  char *name;
+  Symbol* operands[10]; 
 };
 
 typedef struct Instruction Instruction;
@@ -59,7 +61,7 @@ typedef struct Instruction Instruction;
 #define get_temp_reg() get_reg(NULL)
 
 #define MAX_TABLE_SIZE 5000
-#define REG_MAX 15
+#define REG_MAX 5
 enum {
   TYPE_BOOL = 1,
   TYPE_INT,
@@ -105,8 +107,10 @@ void gen_ir_mod(Symbol *, Symbol *, Symbol *);
 void gen_ir_cmp(Symbol *, Symbol *, Symbol *, int);
 void gen_ir_str(Symbol *, int);
 void gen_ir_ldr(Symbol *, int);
+void gen_ir_call(char *name, Symbol **, int);
 void gen_ir_brcond(int);
 void gen_ir_label(int);
+
 
 void gen_mc_inst();
 #endif 

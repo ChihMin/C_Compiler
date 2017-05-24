@@ -73,9 +73,10 @@
 %token NUM_FLOAT CONST_STR CONST_CHAR TRUE FALSE
 %token VOID INTEGER FLOAT BOOL CHARACTER CONST
 %token ADD2 SUB2 LT LE GT GE EQ NE LOGAND LOGOR LOGNOT BITAND
+%token DELAY WRITE HIGH LOW
 %token <ival> NUM_INT
 %token <str> IDENT 
-%type <symbol> factor selfop unary muldiv addsub cmp not and expr declare init
+%type <symbol> factor selfop unary muldiv addsub cmp not and expr declare init onoff
 %%
 
 context : context globaldeclare
@@ -196,12 +197,14 @@ statements : statements simplestatement { has_invoke_function = 0; }
            | statements whilestatement
            | statements switchstatement
            | statements rbcstatement
+           | statements api
            | simplestatement { has_invoke_function = 0; }
            | ifelsestatement
            | switchstatement
            | whilestatement
            | forstatement
-           | rbcstatement 
+           | rbcstatement
+           | api
            ;
 simplestatement : IDENT '=' expr ';' { 
                     dbg("Statement .. \n");
@@ -248,6 +251,37 @@ casestatement : | statements
 rbcstatement : RETURN expr ';' { dbg("return expr \n"); }
              | BREAK ';' { dbg("Break \n"); }
              | CONTINUE ';' { dbg("Continue \n"); }
+             ;
+api : DELAY '(' expr ')' ';' { 
+        Symbol *argv[] = {$3};
+        char tmp[] = "delay";
+        char *name = (char *)malloc(strlen(tmp)+4);
+        strcpy(name, tmp);
+        gen_ir_call(name, argv, 1);
+      }
+    | WRITE '(' expr ',' onoff ')' ';' {
+        Symbol *argv[] = {$3, $5};
+        char tmp[] = "digitalWrite";
+        char *name = (char *)malloc(strlen(tmp)+4);
+        strcpy(name, tmp);
+        gen_ir_call(name, argv, 2);
+      }
+    ;
+onoff : HIGH { 
+            $$ = alloc_symbol();
+            $$->is_int = 1;
+            $$->ival = 1;
+            gen_ir_movi($$, 1);
+            print("HIGH [%d] = %d\n", $$->id, 1);
+        } 
+      | LOW {
+            $$ = alloc_symbol();
+            $$->is_int = 1;
+            $$->ival = 0;
+            gen_ir_movi($$, 0);
+            print("HIGH [%d] = %d\n", $$->id, 0);
+        }
+      ;
 
 expr : expr LOGOR and { dbg("Logic OR\n"); }
      | and

@@ -162,6 +162,10 @@ char *buf;
 "vsprintf"	{PL; PT(KEY);return IDENT;}
 "vsscanf"	{PL; PT(KEY);return IDENT;}
 
+"delay" {PL; PT(ID); return DELAY;}; 
+"digitalWrite" {PL; PT(ID); return WRITE;};
+"HIGH" {PL; PT(ID); return HIGH; };
+"LOW" {PL; PT(ID); return LOW; };
 
 "+" { PL; PT(OP); return '+'; }
 "-" { PL; PT(OP); return '-'; }

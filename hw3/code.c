@@ -181,6 +181,18 @@ void gen_ir_cmp(Symbol *op0, Symbol *op1, Symbol *op2, int type) {
     #undef ins
 }
 
+void gen_ir_call(char *name, Symbol **argv, int argc) {
+    #define ins IR[ir_num]
+    int i;
+    ins.opc = OP_CALL;
+    ins.name = name;
+    ins.operand_num = argc;
+    for (i = 0; i < argc; ++i)
+        ins.operands[i] = argv[i];
+    ir_num++;
+    #undef ins
+}
+
 /*********** BACKEND ************/
 
 void free_reg(int idx) {
@@ -254,9 +266,12 @@ int load_back_reg(Symbol *symbol) {
         return r;
     } 
     
-    if (!symbol->in_reg)
+    if (!symbol->in_reg) {
         get_reg(symbol);
-    
+    } else {
+        // update access time
+        reg[symbol->reg].time = cur_time++;
+    }
     return symbol->reg;
 }
 
@@ -332,6 +347,7 @@ void gen_mc_lwi(Symbol *op, int offset, int type) {
 void gen_mc_brcond(Symbol *op, int label) {
     int r = load_back_reg(op);
     sprintf(*(code_ptr++), "beqz\t$r%d, _L%d", r, label);
+    free_reg(r);
 }
 
 void gen_mc_eq(Symbol *op0, Symbol *op1, Symbol *op2) {
@@ -439,9 +455,36 @@ void gen_mc_lt(Symbol *op0, Symbol *op1, Symbol *op2) {
     #undef emit
 }
 
+void gen_mc_call(char *name, Symbol **argv,  int argc) {
+    // Here only can handle five parameters to call the function ...
+    #define emit *(code_ptr++)
+    int i;
+    int reg_stack[5];
+    sprintf(emit, "addi\t$sp, $sp, -%d", argc * 4); 
+    for (i = 0; i < argc; ++i) {
+        reg_stack[i] = load_back_reg(argv[i]);
+        sprintf(emit, "swi\t$r%d, [$sp + %d]", reg_stack[i], 4 * i);
+    }
+    
+    for (i = 0; i < argc; ++i) {
+        reg_stack[i] = load_back_reg(argv[i]);
+        sprintf(emit, "lwi\t$r%d, [$sp + %d]", i, 4 * i);
+    }
+
+    sprintf(emit, "bal\t%s", name);
+    
+    for (i = 0; i < argc; ++i) {
+        reg_stack[i] = load_back_reg(argv[i]);
+        sprintf(emit, "swi\t$r%d, [$sp + %d]", reg_stack[i], 4 * i);
+    }
+    sprintf(emit, "addi\t$sp, $sp, %d", argc * 4); 
+
+    #undef emit
+}
+
 void gen_mc_inst() {
     memset(reg, 0, sizeof(reg));
-    int i;
+    int i, j;
     for (i = 0; i < ir_num; ++i) {
         int opc = IR[i].opc;
         int symbol_id;
@@ -519,14 +562,19 @@ void gen_mc_inst() {
                 break;
             }
             break;
+        
+        case OP_CALL:
+            gen_mc_call(IR[i].name, IR[i].operands, IR[i].operand_num);
+            break;
 
         default:
             printf("Unsupport IR OPCode ... \n");
-            exit(-1);
+            // exit(-1);
         }
     }
     #ifdef DEBUG
-    printf("\x1B[36m"); 
+    printf("\x1B[36m");
+    //printf("\tpush.s { $lp }\n"); 
     printf("\taddi\t$sp, $sp - %d\n", cur_offset);
     char **ptr;
     for (ptr = code_base; ptr != code_ptr; ++ptr) {
@@ -537,15 +585,15 @@ void gen_mc_inst() {
         printf("%s\n", *ptr);
     }
     printf("\taddi\t$sp, $sp + %d\n", cur_offset);
-    printf("\tpop.s\t{ $lp }\n");
-    printf("\tret\n");
+    //printf("\tpop.s\t{ $lp }\n");
+    //printf("\tret\n");
     #endif
 }
 
 void printIR() {
     printf("\x1B[31m");
     printf("******** DORA-IR *********\n");
-    int i;
+    int i, j;
     for (i = 0; i < ir_num; ++i) {
         int opc = IR[i].opc;
         int symbol_id;
@@ -614,6 +662,12 @@ void printIR() {
                 break;
             }
             printf(" [%d]\n", op2->id);
+            break;
+        case OP_CALL:
+            printf("Call %s ", IR[i].name);
+            for (j = 0; j < IR[i].operand_num; ++j)
+                printf("[%d], ", IR[i].operands[j]->id);
+            printf("\n");
             break;
         default:
             printf("Unsupport IR OPCode ... \n");
