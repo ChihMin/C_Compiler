@@ -57,6 +57,7 @@ struct Instruction {
   int label;
   int cmp_type;
   char *name;
+  int offset;
   Symbol* operands[10]; 
 };
 

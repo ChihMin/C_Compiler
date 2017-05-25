@@ -250,8 +250,31 @@ ifelsestatement : IF '(' expr ')' { /* Set jump to else */
 elsestmt : ELSE scope
          |
          ;
-whilestatement : WHILE {  } '(' expr ')' scope { dbg("While statement ... \n"); }
-               | DO scope WHILE '(' expr ')' ';' { dbg("Do-While statement \n"); } 
+whilestatement : WHILE {
+                    label_stack[++label_top] = cur_label;
+                    gen_ir_label(cur_label++);   
+                 } '(' expr ')' {
+                    print("[label] while(expr) scope = %d jump to .L%d\n", cur_scope, cur_label);
+                    label_stack[++label_top] = cur_label; // Push Label
+                    gen_ir_brcond(cur_label);
+                    cur_label++;
+                 } scope {
+                    dbg("While statement ... \n");
+                    int expr_label = label_stack[label_top--];
+                    int while_label = label_stack[label_top--];
+                    Symbol *zero = alloc_symbol();
+                    
+                    // Unconditional Jump
+                    zero->is_int = 1;
+                    zero->ival = 0;
+                    gen_ir_movi(zero, 0);    
+                    gen_ir_brcond(while_label);
+
+                    // Set exit label
+                    gen_ir_label(expr_label);
+                 }
+               | DO scope WHILE '(' expr ')' ';' { dbg("Do-While statement \n"); }
+               ; 
 forstatement : FOR '(' forparam ';' {print("Set Label ... %c",'\n' );} forparam ';' forparam ')' scope { dbg("For statement \n"); }
 forparam : | expr
 

@@ -141,6 +141,7 @@ void gen_ir_mod(Symbol *r1, Symbol *r2, Symbol *r3) {
 // ID(memory) = reg
 void gen_ir_str(Symbol *op, int offset) {
     op->offset = offset;
+    IR[ir_num].offset = offset;
     IR[ir_num].opc = OP_STR;
     IR[ir_num].operands[0] = op;
     IR[ir_num].operand_num = 1;
@@ -149,6 +150,7 @@ void gen_ir_str(Symbol *op, int offset) {
 
 void gen_ir_ldr(Symbol *op, int offset) {
     op->offset = offset;
+    IR[ir_num].offset = offset;
     IR[ir_num].opc = OP_LDR;
     IR[ir_num].operands[0] = op;
     IR[ir_num].operand_num = 1;
@@ -598,10 +600,10 @@ void gen_mc_inst() {
             break;
         
         case OP_STR:
-            gen_mc_swi(op0, op0->offset, 0);
+            gen_mc_swi(op0, IR[i].offset, 0);
             break;
         case OP_LDR:
-            gen_mc_lwi(op0, op0->offset, 0);
+            gen_mc_lwi(op0, IR[i].offset, 0);
             break;
         
         case OP_BRCOND:
@@ -728,10 +730,10 @@ void printIR() {
             printf("[%d] = [%d] && [%d]\n", op0->id, op1->id, op2->id);
             break;
         case OP_STR:
-            printf("store [%d] to offset %d(%s)\n", op0->id, op0->offset, op0->name);
+            printf("store [%d] to offset %d(%s)\n", op0->id, IR[i].offset, op0->name);
             break;
         case OP_LDR:
-            printf("Load offset %d(%s) to [%d]\n", op0->offset, op0->name, op0->id);
+            printf("Load offset %d(%s) to [%d]\n", IR[i].offset, op0->name, op0->id);
             break;
         case OP_BRCOND:
             printf("Brcond [%d] == 0, Jump to .L%d\n", op0->id, IR[i].label); 
