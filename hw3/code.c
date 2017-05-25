@@ -574,7 +574,6 @@ void gen_mc_inst() {
     }
     #ifdef DEBUG
     printf("\x1B[36m");
-    //printf("\tpush.s { $lp }\n"); 
     printf("\taddi\t$sp, $sp - %d\n", cur_offset);
     char **ptr;
     for (ptr = code_base; ptr != code_ptr; ++ptr) {
@@ -585,9 +584,18 @@ void gen_mc_inst() {
         printf("%s\n", *ptr);
     }
     printf("\taddi\t$sp, $sp + %d\n", cur_offset);
-    //printf("\tpop.s\t{ $lp }\n");
-    //printf("\tret\n");
     #endif
+    
+    fprintf(f_asm, "\taddi\t$sp, $sp - %d\n", cur_offset);
+    char **_ptr;
+    for (_ptr = code_base; _ptr != code_ptr; ++_ptr) {
+        if (**_ptr != '_')
+            fprintf(f_asm, "\t");
+        else
+            fprintf(f_asm, "\n");
+        fprintf(f_asm, "%s\n", *_ptr);
+    }
+    fprintf(f_asm, "\taddi\t$sp, $sp + %d\n", cur_offset);
 }
 
 void printIR() {
