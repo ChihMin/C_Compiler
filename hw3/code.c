@@ -277,12 +277,12 @@ int load_back_reg(Symbol *symbol) {
 
 void gen_mc_movi(Symbol *symbol, int val) {
     int r = get_reg(symbol);
-    int h = ((val & 0xFFF00000) >> 20) & 0xFFF;
-    int l = val & 0xFFFFF;
+    int h = ((val & 0xFFFFF000) >> 12) & 0xFFFFF;
+    int l = val & 0xFFF;
     
     if (h) {
         sprintf(*(code_ptr++), "movi\t$r%d, %d", r, h);
-        sprintf(*(code_ptr++), "slli\t$r%d, $r%d, 20", r,r);
+        sprintf(*(code_ptr++), "slli\t$r%d, $r%d, 12", r,r);
         sprintf(*(code_ptr++), "ori\t$r%d, $r%d, %d", r, r, l);
     } else { 
         sprintf(*(code_ptr++), "movi\t$r%d, %d", r, l); 
@@ -460,24 +460,24 @@ void gen_mc_call(char *name, Symbol **argv,  int argc) {
     #define emit *(code_ptr++)
     int i;
     int reg_stack[5];
-    sprintf(emit, "addi\t$sp, $sp, -%d", argc * 4); 
-    for (i = 0; i < argc; ++i) {
+    for (i = 0; i < argc; ++i)
         reg_stack[i] = load_back_reg(argv[i]);
-        sprintf(emit, "swi\t$r%d, [$sp + %d]", reg_stack[i], 4 * i);
-    }
     
-    for (i = 0; i < argc; ++i) {
-        reg_stack[i] = load_back_reg(argv[i]);
+    sprintf(emit, "addi\t$sp, $sp, -%d", argc * 4); 
+    for (i = 0; i < argc; ++i)
+        sprintf(emit, "swi\t$r%d, [$sp + %d]", reg_stack[i], 4 * i);
+    
+    for (i = 0; i < argc; ++i)
         sprintf(emit, "lwi\t$r%d, [$sp + %d]", i, 4 * i);
-    }
 
     sprintf(emit, "bal\t%s", name);
     
-    for (i = 0; i < argc; ++i) {
-        reg_stack[i] = load_back_reg(argv[i]);
-        sprintf(emit, "swi\t$r%d, [$sp + %d]", reg_stack[i], 4 * i);
-    }
-    sprintf(emit, "addi\t$sp, $sp, %d", argc * 4); 
+    for (i = 0; i < argc; ++i) 
+        sprintf(emit, "lwi\t$r%d, [$sp + %d]", reg_stack[i], 4 * i);
+    sprintf(emit, "addi\t$sp, $sp, %d", argc * 4);
+    
+    for (i = 0; i < argc; ++i)
+        free_reg(reg_stack[i]);
 
     #undef emit
 }
@@ -574,7 +574,7 @@ void gen_mc_inst() {
     }
     #ifdef DEBUG
     printf("\x1B[36m");
-    printf("\taddi\t$sp, $sp - %d\n", cur_offset);
+    printf("\taddi\t$sp, $sp, -%d\n", cur_offset);
     char **ptr;
     for (ptr = code_base; ptr != code_ptr; ++ptr) {
         if (**ptr != '_')
@@ -583,10 +583,11 @@ void gen_mc_inst() {
             printf("\n");
         printf("%s\n", *ptr);
     }
-    printf("\taddi\t$sp, $sp + %d\n", cur_offset);
+    printf("\taddi\t$sp, $sp, +%d\n", cur_offset);
     #endif
     
-    fprintf(f_asm, "\taddi\t$sp, $sp - %d\n", cur_offset);
+    fprintf(f_asm, "\n\n\n"); 
+    fprintf(f_asm, "\taddi\t$sp, $sp, -%d\n", cur_offset);
     char **_ptr;
     for (_ptr = code_base; _ptr != code_ptr; ++_ptr) {
         if (**_ptr != '_')
@@ -595,7 +596,7 @@ void gen_mc_inst() {
             fprintf(f_asm, "\n");
         fprintf(f_asm, "%s\n", *_ptr);
     }
-    fprintf(f_asm, "\taddi\t$sp, $sp + %d\n", cur_offset);
+    fprintf(f_asm, "\taddi\t$sp, $sp, %d\n", cur_offset);
 }
 
 void printIR() {
