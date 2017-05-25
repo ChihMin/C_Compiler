@@ -15,7 +15,10 @@ enum {
   OP_BRCOND,
   OP_CMP,
   OP_LABEL,
-  OP_CALL
+  OP_CALL,
+  OP_NOT,
+  OP_OR,
+  OP_AND
 };
 
 enum {
@@ -24,7 +27,8 @@ enum {
   CMP_GE,
   CMP_GT,
   CMP_LE,
-  CMP_LT
+  CMP_LT,
+  CMP_JMP
 };
 
 struct Symbol {
@@ -104,7 +108,10 @@ void gen_ir_sub(Symbol *, Symbol *, Symbol *);
 void gen_ir_mul(Symbol *, Symbol *, Symbol *);
 void gen_ir_div(Symbol *, Symbol *, Symbol *);
 void gen_ir_mod(Symbol *, Symbol *, Symbol *);
+void gen_ir_and(Symbol *, Symbol *, Symbol *);
+void gen_ir_or(Symbol *, Symbol *, Symbol *);
 void gen_ir_cmp(Symbol *, Symbol *, Symbol *, int);
+void gen_ir_not(Symbol *, Symbol *);
 void gen_ir_str(Symbol *, int);
 void gen_ir_ldr(Symbol *, int);
 void gen_ir_call(char *name, Symbol **, int);

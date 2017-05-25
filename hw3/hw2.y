@@ -225,11 +225,25 @@ ifelsestatement : IF '(' expr ')' { /* Set jump to else */
                     cur_label++;
                   } scope { /* Gen jump */ 
                     print("if stmt scope = %d\n", cur_scope);
+                    
+                    Symbol *zero = alloc_symbol();
+                    zero->is_int = 1;
+                    zero->ival = 0;
+                    gen_ir_movi(zero, 0);
+                    gen_ir_brcond(cur_label);
+                    
                     gen_ir_label(label_stack[label_top]);
                     print("[label] .L%d\n", label_stack[label_top]);
-                    label_top--; // pop label 
+                    
+                    label_stack[label_top] = cur_label; 
+                    print("[label] .L%d\n", label_stack[label_top]);
+
+                    cur_label++;
                   } elsestmt {
                     dbg("If-else Statement ... \n"); 
+                    gen_ir_label(label_stack[label_top]);
+                    print("[label] .L%d\n", label_stack[label_top]);
+                    label_top--;
                     print("else stmp scope = %d\n", cur_scope);
                   }
                 ;
@@ -283,13 +297,30 @@ onoff : HIGH {
         }
       ;
 
-expr : expr LOGOR and { dbg("Logic OR\n"); }
+expr : expr LOGOR and { 
+        dbg("Logic OR\n"); 
+        $$ = alloc_symbol();
+        gen_ir_or($$, $1, $3);
+        print("[%d] = [%d] || [%d]\n", $$->id, $1->id, $3->id);
+       }
      | and
      ;
-and : and LOGAND not { dbg("Logic AND \n"); }
+and : and LOGAND not { 
+        dbg("Logic AND \n");
+        $$ = alloc_symbol();
+        gen_ir_and($$, $1, $3);
+        print("[%d] = [%d] && [%d]\n", $$->id, $1->id, $3->id);
+      }
     | not
     ;
-not : LOGNOT cmp { dbg("Logic !\n"); } | cmp 
+not : LOGNOT cmp { 
+        dbg("Logic !\n"); 
+        $$ = alloc_symbol();
+        gen_ir_not($$, $2);
+        print("[%d] = ![%d]\n", $$->id, $2->id)
+      } 
+    | cmp 
+    ;
 cmp : cmp NE addsub { 
         dbg("Compare !=\n"); 
         $$ = alloc_symbol();

@@ -174,6 +174,7 @@ void gen_ir_cmp(Symbol *op0, Symbol *op1, Symbol *op2, int type) {
     #define ins IR[ir_num]
     ins.opc = OP_CMP;
     ins.cmp_type = type;
+    ins.operand_num = 3;
     ins.operands[0] = op0;
     ins.operands[1] = op1;
     ins.operands[2] = op2;
@@ -192,6 +193,35 @@ void gen_ir_call(char *name, Symbol **argv, int argc) {
     ir_num++;
     #undef ins
 }
+
+void gen_ir_not(Symbol *op0, Symbol *op1) {
+    #define ins IR[ir_num]
+    ins.opc = OP_NOT;
+    ins.operand_num = 2;
+    ins.operands[0] = op0;
+    ins.operands[1] = op1;
+    ir_num++;
+    #undef ins
+}
+
+void gen_ir_and(Symbol *r1, Symbol *r2, Symbol *r3) {
+    IR[ir_num].opc = OP_AND;
+    IR[ir_num].operands[0] = r1;
+    IR[ir_num].operands[1] = r2;
+    IR[ir_num].operands[2] = r3;
+    IR[ir_num].operand_num = 3;
+    ir_num++;
+}
+
+void gen_ir_or(Symbol *r1, Symbol *r2, Symbol *r3) {
+    IR[ir_num].opc = OP_OR;
+    IR[ir_num].operands[0] = r1;
+    IR[ir_num].operands[1] = r2;
+    IR[ir_num].operands[2] = r3;
+    IR[ir_num].operand_num = 3;
+    ir_num++;
+}
+
 
 /*********** BACKEND ************/
 
@@ -482,6 +512,54 @@ void gen_mc_call(char *name, Symbol **argv,  int argc) {
     #undef emit
 }
 
+void gen_mc_not(Symbol *op0, Symbol *op1) {
+    #define emit *(code_ptr++)
+    int r0 = load_back_reg(op0);
+    int r1 = load_back_reg(op1);
+    
+    sprintf(emit, "slti\t$r%d, $r%d, 1", r0, r1);
+    free_reg(r1);
+
+    #undef emit
+}
+
+void gen_mc_and(Symbol *op0, Symbol *op1, Symbol *op2) {
+    #define emit *(code_ptr++)
+    int r0 = load_back_reg(op0);
+    int r1 = load_back_reg(op1);
+    int r2 = load_back_reg(op2);
+    int r3 = get_temp_reg();
+    
+    sprintf(emit, "slti\t$r%d, $r%d, 1", r1, r1);
+    sprintf(emit, "slti\t$r%d, $r%d, 1", r2, r2);
+    sprintf(emit, "or\t$r%d, $r%d, $r%d", r3, r1, r2);
+    sprintf(emit, "xori\t$r%d, $r%d, 1", r0, r3);
+
+    free_reg(r1);
+    free_reg(r2);
+    free_reg(r3);
+
+    #undef emit
+}
+
+void gen_mc_or(Symbol *op0, Symbol *op1, Symbol *op2) {
+    #define emit *(code_ptr++)
+    int r0 = load_back_reg(op0);
+    int r1 = load_back_reg(op1);
+    int r2 = load_back_reg(op2);
+    int r3 = get_temp_reg();
+    
+    sprintf(emit, "or\t$r%d, $r%d, $r%d", r3, r1, r2);
+    sprintf(emit, "slti\t$r%d, $r%d, 1", r3, r3);
+    sprintf(emit, "xori\t$r%d, $r%d, 1", r0, r3);
+
+    free_reg(r1);
+    free_reg(r2);
+    free_reg(r3);
+
+    #undef emit
+}
+
 void gen_mc_inst() {
     memset(reg, 0, sizeof(reg));
     int i, j;
@@ -566,10 +644,22 @@ void gen_mc_inst() {
         case OP_CALL:
             gen_mc_call(IR[i].name, IR[i].operands, IR[i].operand_num);
             break;
+        
+        case OP_NOT:
+            gen_mc_not(op0, op1);
+            break;
+
+        case OP_AND:
+            gen_mc_and(op0, op1, op2);
+            break;
+
+        case OP_OR:
+            gen_mc_or(op0, op1, op2);
+            break;
 
         default:
-            printf("Unsupport IR OPCode ... \n");
-            // exit(-1);
+            printf("Unsupport IR OPCode - %d ... \n", opc);
+            exit(-1);
         }
     }
     #ifdef DEBUG
@@ -631,6 +721,12 @@ void printIR() {
         case OP_MOD:
             printf("[%d] = [%d] mod [%d]\n", op0->id, op1->id, op2->id);
             break;
+        case OP_OR:
+            printf("[%d] = [%d] || [%d]\n", op0->id, op1->id, op2->id);
+            break;
+        case OP_AND:
+            printf("[%d] = [%d] && [%d]\n", op0->id, op1->id, op2->id);
+            break;
         case OP_STR:
             printf("store [%d] to offset %d(%s)\n", op0->id, op0->offset, op0->name);
             break;
@@ -672,12 +768,18 @@ void printIR() {
             }
             printf(" [%d]\n", op2->id);
             break;
+        
         case OP_CALL:
             printf("Call %s ", IR[i].name);
             for (j = 0; j < IR[i].operand_num; ++j)
                 printf("[%d], ", IR[i].operands[j]->id);
             printf("\n");
             break;
+        
+        case OP_NOT:
+            printf("[%d] = NOT [%d]\n", op0->id, op1->id);
+            break;
+            
         default:
             printf("Unsupport IR OPCode ... \n");
             exit(-1);
