@@ -392,7 +392,7 @@ void gen_mc_ge(Symbol *op0, Symbol *op1, Symbol *op2) {
     int r2 = load_back_reg(op2);
     int r3 = get_temp_reg();
  
-    sprintf(emit, "stls\t$r%d, $r%d, $r%d", r3, r1, r2);
+    sprintf(emit, "slts\t$r%d, $r%d, $r%d", r3, r1, r2);
     sprintf(emit, "xori\t$r%d, $r%d, 1", r0, r3);
     
     free_reg(r1);
@@ -409,7 +409,7 @@ void gen_mc_gt(Symbol *op0, Symbol *op1, Symbol *op2) {
     int r3 = get_temp_reg();
     int r4 = get_temp_reg();
 
-    sprintf(emit, "stls\t$r%d, $r%d, $r%d", r3, r1, r2);
+    sprintf(emit, "slts\t$r%d, $r%d, $r%d", r3, r1, r2);
     sprintf(emit, "xor\t$r%d, $r%d, $r%d", r4, r1, r2);
     sprintf(emit, "slti\t$r%d, $r%d, 1", r4, r4);
     sprintf(emit, "or\t$r%d, $r%d, $r%d", r0, r3, r4);
@@ -430,7 +430,7 @@ void gen_mc_le(Symbol *op0, Symbol *op1, Symbol *op2) {
     int r3 = get_temp_reg();
     int r4 = get_temp_reg();
  
-    sprintf(emit, "stls\t$r%d, $r%d, $r%d", r3, r1, r2);
+    sprintf(emit, "slts\t$r%d, $r%d, $r%d", r3, r1, r2);
     sprintf(emit, "xor\t$r%d, $r%d, $r%d", r4, r1, r2);
     sprintf(emit, "slti\t$r%d, $r%d, 1", r4, r4);
     sprintf(emit, "or\t$r%d, $r%d, $r%d", r0, r3, r4);
@@ -448,7 +448,7 @@ void gen_mc_lt(Symbol *op0, Symbol *op1, Symbol *op2) {
     int r1 = load_back_reg(op1);
     int r2 = load_back_reg(op2);
  
-    sprintf(emit, "stls\t$r%d, $r%d, $r%d", r0, r1, r2);
+    sprintf(emit, "slts\t$r%d, $r%d, $r%d", r0, r1, r2);
     
     free_reg(r1);
     free_reg(r2);
