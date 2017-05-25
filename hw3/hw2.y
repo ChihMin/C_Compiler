@@ -428,8 +428,44 @@ unary : '-' selfop {
             $$ = op0;
         } 
       | selfop 
-selfop : factor ADD2 { dbg("ADDDDDDDD\n"); }
-       | factor SUB2 { dbg("SUBBBBBBB\n"); }
+selfop : factor ADD2 { 
+            dbg("ADDDDDDDD\n");
+            Symbol *new_var = alloc_symbol();
+            Symbol *one = alloc_symbol();
+            
+            int offset = lookup_symbol($1->name, cur_scope);
+            if (offset < 0) {
+                fprintf(stderr, " ++var error ...\n");
+                yyerror(NULL);
+            }
+
+            one->ival = 1;
+            one->is_int = 1;
+            gen_ir_movi(one, 1);
+            gen_ir_add(new_var, $1, one);
+            gen_ir_str(new_var, offset);
+            
+            $$ = $1;
+         }
+       | factor SUB2 { 
+            dbg("SUBBBBBBB\n"); 
+            Symbol *new_var = alloc_symbol();
+            Symbol *one = alloc_symbol();
+            
+            int offset = lookup_symbol($1->name, cur_scope);
+            if (offset < 0) {
+                fprintf(stderr, " ++var error ...\n");
+                yyerror(NULL);
+            }
+
+            one->ival = 1;
+            one->is_int = 1;
+            gen_ir_movi(one, 1);
+            gen_ir_sub(new_var, $1, one);
+            gen_ir_str(new_var, offset);
+            
+            $$ = $1;
+         }
        | factor
        ;
 
