@@ -235,6 +235,7 @@ char *buf;
 \'{CH}\'  {PL; PT(CHAR); return CONST_CHAR;}
 [\ \t]* {PL; }
 \n  {PL;  END;}
+\r { }
 . { PL; ERROR;}
 %%
 

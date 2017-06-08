@@ -522,7 +522,9 @@ int main() {
     if (!func_count)
         yyerror(NULL);
     printf("No syntax error!\n");
+    #ifdef DEBUG
     printIR();
+    #endif
     return 0;
 }
 

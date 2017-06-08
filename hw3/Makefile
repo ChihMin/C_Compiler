@@ -1,12 +1,12 @@
 all:
 	@byacc -d hw2.y
 	@flex hw2.l
-	@gcc -DDEBUG -g lex.yy.c y.tab.c code.c -o parser -lfl
+	@gcc lex.yy.c y.tab.c code.c -o codegen -lfl
 
 debug:
 	@byacc -d hw2.y
 	@flex hw2.l
-	@gcc -DDEBUG lex.yy.c y.tab.c code.c -o parser -lfl
+	@gcc -DDEBUG -g lex.yy.c y.tab.c code.c -o codegen -lfl
 
 install:
 	./create.sh
